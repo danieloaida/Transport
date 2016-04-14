@@ -53,24 +53,23 @@ public class XmlParser {
     // off
     // to their respective &quot;read&quot; methods for processing. Otherwise, skips the tag.
     private Station readStation(XmlPullParser parser) throws XmlPullParserException, IOException, NumberFormatException {
-        parser.require(XmlPullParser.START_TAG, ns, "station");
-        String name = null;
-        String tmpString = null;
-        double lat = 0;
-        double lng = 0;
-        int id_st = 0;
-        while (parser.next() != XmlPullParser.END_TAG) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
-            }
-            name = parser.getAttributeValue(null, "station");
-            tmpString = parser.getAttributeValue(null, "lat");
-            lat = Double.parseDouble(tmpString);
-            tmpString = parser.getAttributeValue(null, "lng");
-            lng = Double.parseDouble(tmpString);
-            tmpString = parser.getAttributeValue(null, "id_st");
-            id_st = Integer.parseInt(tmpString);
-        }
+        parser.require(XmlPullParser.START_TAG, ns, "marker");
+        String name;
+        String tmpString;
+        double lat;
+        double lng;
+        int id_st;
+
+        name = parser.getAttributeValue(null, "station");
+        tmpString = parser.getAttributeValue(null, "lat");
+        lat = Double.parseDouble(tmpString);
+        tmpString = parser.getAttributeValue(null, "lng");
+        lng = Double.parseDouble(tmpString);
+        tmpString = parser.getAttributeValue(null, "id_st");
+        id_st = Integer.parseInt(tmpString);
+
+        parser.nextTag();
+        parser.require(XmlPullParser.END_TAG, ns, "marker");
         return new Station(name, lat, lng, id_st);
     }
 
