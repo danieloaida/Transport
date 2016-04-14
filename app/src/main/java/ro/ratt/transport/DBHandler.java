@@ -89,12 +89,14 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
     // Insert Station
-    public void addStation(int id, String name){
+    public void addStation(int id, String name, double lat, double lng){
         ContentValues values = new ContentValues();
         SQLiteDatabase db = this.getWritableDatabase();
 
         values.put(COLUMN_STATIONID, id);
         values.put(COLUMN_STATIONNAME, name);
+        values.put(COLUMN_LAT, lat);
+        values.put(COLUMN_LNG, lng);
         db.insert(TABLE_STATIONS, null, values);
         db.close();
     }
