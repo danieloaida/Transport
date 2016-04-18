@@ -5,19 +5,16 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -82,26 +79,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     }
-    public class MarkerDemoActivity extends AppCompatActivity implements
-            OnInfoWindowClickListener,
-            OnMapReadyCallback {
 
-
-        @Override
-        public void onMapReady(GoogleMap map) {
-            mMap = map;
-            // Add markers to the map and do other map setup.
-            ...
-            // Set a listener for info window events.
-            mMap.setOnInfoWindowClickListener(this);
-        }
-
-        @Override
-        public void onInfoWindowClick(Marker marker) {
-            Toast.makeText(this, "Info window clicked",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
