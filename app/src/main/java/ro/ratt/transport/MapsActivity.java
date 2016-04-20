@@ -204,7 +204,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         PopulateDB();
         // Highlight the selected item, update the title, and close the drawer
         mDrawerList.setItemChecked(position, true);
-        setTitle(mPlanetTitles[position]);
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
