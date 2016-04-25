@@ -1,8 +1,6 @@
 package ro.ratt.transport;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
@@ -11,6 +9,7 @@ import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -21,7 +20,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,10 +29,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private DrawerLayout mDrawerLayout;
     private ExpandableListAdapter listAdapter;
     private ExpandableListView mDrawerList;
-    private XmlParser xmlParser;
-    private DBHandler dbHandler;
     private GoogleMap mMap;
-
+    private DBHandler dbHandler;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
@@ -48,7 +44,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        xmlParser = new XmlParser();
         dbHandler = new DBHandler(this, null, null, 1);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -180,11 +175,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        CameraUpdate zoom=CameraUpdateFactory.zoomTo(11);
+
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(45.7436788,21.1609697);
+        LatLng sydney = new LatLng(45.756,21.229);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Timisoara"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
+        mMap.animateCamera(zoom);
 
     }
 
@@ -201,31 +198,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     /** Swaps fragments in the main content view */
     private void selectItem(int position) throws XmlPullParserException, IOException{
-        PopulateDB();
+        
         // Highlight the selected item, update the title, and close the drawer
         mDrawerList.setItemChecked(position, true);
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
-    public void PopulateDB() throws XmlPullParserException, IOException {
-        List<Station> list = new ArrayList<Station>();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if(!prefs.getBoolean("firstTime", false)) {
-            InputStream is = getResources().openRawResource(R.raw.stations);
-            list.addAll(xmlParser.parse(is));
-            for (Station IterateStation : list) {
-
-                LatLng sydney = new LatLng(IterateStation.getLat(), IterateStation.getLng());
-                mMap.addMarker(new MarkerOptions().position(sydney).title(IterateStation.getName()));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                dbHandler.addObj(IterateStation);
-            }
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("firstTime", true);
-            editor.commit();
-        }
-
-    }
 
 
 }

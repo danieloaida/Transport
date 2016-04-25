@@ -10,101 +10,76 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by baby on 4/6/2016.
  */
 public class DBHandler extends SQLiteOpenHelper {
-        public static final int DATABASE_VERSION = 1;
-        public static final String DATABASE_NAME ="transport.db";
-        public static final String TABLE_STATIONS = "stations";
-        public static final String COLUMN_STATIONID ="stationid";
-        public static final String COLUMN_STATIONNAME ="stationname";
-        public static final String COLUMN_LAT ="lat";
-        public static final String COLUMN_LNG ="lng";
-        public static final String TABLE_LINES = "lines";
-        public static final String COLUMN_LINEID ="lineid";
-        public static final String COLUMN_LINENAME ="linename";
-        public static final String COLUMN_INDEX ="ind";
+    public static final int DATABASE_VERSION = 1;
+    public static final String DATABASE_NAME ="transport.db";
 
-        public DBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    public static final String TABLE_JUNCTIONS = "junctions";
+    public static final String COLUMN_INDEX ="index";
+    public static final String COLUMN_lineID = "lineID";
+    public static final String COLUMN_lineName = "lineName";
+    public static final String COLUMN_stationID = "stationID";
+    public static final String COLUMN_rawStationName = "rawStationName";
+    public static final String COLUMN_friendlyStationName = "friendlyStationName";
+    public static final String COLUMN_shortStationName = "shortStationName";
+    public static final String COLUMN_junctionName = "junctionName";
+    public static final String COLUMN_lat = "lat";
+    public static final String COLUMN_lng = "lng";
+    public static final String COLUMN_invalid = "invalid";
+    public static final String COLUMN_verificationDate = "verificationDate";
+
+    public DBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
 
-
     }
 
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE " + TABLE_STATIONS + "(" +
-                COLUMN_STATIONID + " INTEGER PRIMARY KEY, "  +
-                COLUMN_STATIONNAME + " TEXT, "  +
-                COLUMN_LAT + " DOUBLE, "  +
-                COLUMN_LNG + " DOUBLE "  +
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        String query = "CREATE TABLE " + TABLE_JUNCTIONS + "(" +
+                COLUMN_INDEX + " INTEGER PRIMARY KEY AUTOINCREMENT, "  +
+                COLUMN_lineID + " INTEGER, "  +
+                COLUMN_lineName + " TEXT, "  +
+                COLUMN_stationID + " INTEGER, "  +
+                COLUMN_rawStationName + " TEXT, "  +
+                COLUMN_friendlyStationName + " TEXT, "  +
+                COLUMN_shortStationName + " TEXT, "  +
+                COLUMN_junctionName + " TEXT, "  +
+                COLUMN_lat + " DOUBLE, "  +
+                COLUMN_lng + " DOUBLE "  +
+                COLUMN_invalid + " TEXT, "  +
+                COLUMN_verificationDate + " TEXT "  +
                 ");";
         db.execSQL(query);
-
-   /*    query = "CREATE TABLE " + TABLE_LINES + "(" +
-                COLUMN_INDEX + " INTEGER PRIMARY KEY"  +
-                COLUMN_LINEID + " INTEGER"  +
-                COLUMN_STATIONID + " INTEGER"  +
-                COLUMN_LINENAME + " TEXT "  +
-                ");";
-
-        db.execSQL(query);*/
-
-
     }
 
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATIONS);
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_JUNCTIONS);
         onCreate(db);
     }
 
-        // Insert data Object
-    public void addObj(Object item){
-        ContentValues values = new ContentValues();
-        SQLiteDatabase db = getWritableDatabase();
-        if (item instanceof Lines){
-            values.put(COLUMN_LINEID,((Lines) item).getLineId());
-            values.put(COLUMN_STATIONID, ((Lines) item).getStationId());
-            values.put(COLUMN_LINENAME, ((Lines) item).getLineName());
-            db.insert(TABLE_LINES, null, values);
-            db.close();
-        }
-        else if (item instanceof Station){
-            values.put(COLUMN_STATIONID, ((Station) item).getId_st());
-            values.put(COLUMN_STATIONNAME, ((Station) item).getName());
-            values.put(COLUMN_LAT, ((Station) item).getLat());
-            values.put(COLUMN_LNG, ((Station) item).getLng());
-            db.insert(TABLE_STATIONS, null, values);
-            db.close();
-        }
-    }
-
     // Insert data Object
-    public void addLine(int id, int stationid,String name ){
+    public void addJunction(Junction junction){
         ContentValues values = new ContentValues();
         SQLiteDatabase db = getWritableDatabase();
-        values.put(COLUMN_LINEID, id);
-        values.put(COLUMN_STATIONID, stationid);
-        values.put(COLUMN_LINENAME, name);
-        db.insert(TABLE_LINES, null, values);
-        db.close();
-
-    }
-    // Insert Station
-    public void addStation(int id, String name, double lat, double lng){
-        ContentValues values = new ContentValues();
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        values.put(COLUMN_STATIONID, id);
-        values.put(COLUMN_STATIONNAME, name);
-        values.put(COLUMN_LAT, lat);
-        values.put(COLUMN_LNG, lng);
-        db.insert(TABLE_STATIONS, null, values);
+        values.put(COLUMN_lineID, junction.getLineID());
+        values.put(COLUMN_lineName, junction.getLineName());
+        values.put(COLUMN_stationID, junction.getStationID());
+        values.put(COLUMN_rawStationName, junction.getRawStationName());
+        values.put(COLUMN_friendlyStationName, junction.getFriendlyStationName());
+        values.put(COLUMN_shortStationName, junction.getShortStationName());
+        values.put(COLUMN_junctionName, junction.getJunctionName());
+        values.put(COLUMN_lat, junction.getLat());
+        values.put(COLUMN_lng, junction.getLng());
+        values.put(COLUMN_invalid, junction.isInvalid());
+        values.put(COLUMN_verificationDate, junction.getVerificationDate());
+        db.insert(TABLE_JUNCTIONS, null, values);
         db.close();
     }
 
     // Delete data
-    public void delete(int index, String tableName){
+    public void deleteJunction(int index){
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("DELETE FROM " + tableName + " WHERE " + COLUMN_INDEX + "=\"" + index + "\";");
+        db.execSQL("DELETE FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_INDEX + "=\"" + index + "\";");
     }
 
     // Print data
