@@ -27,8 +27,10 @@ public class CSVReader {
             String csvLine;
             while((csvLine = reader.readLine()) != null){
                 String[] row = csvLine.split(",");
-                Junction newItem = new Junction(row);
-                resultList.add(newItem);
+                if (!(row[0].equals("LineID") || row[0].equals(""))) {
+                    Junction newItem = new Junction(row);
+                    resultList.add(newItem);
+                }
             }
         } catch(IOException ex){
             throw new RuntimeException("Error in reading CSV file" + ex);
