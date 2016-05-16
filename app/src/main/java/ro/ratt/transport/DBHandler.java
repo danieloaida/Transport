@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by baby on 4/6/2016.
  */
@@ -76,12 +79,70 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+
     // Delete data
     public void deleteJunction(int index){
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_INDEX + "=\"" + index + "\";");
     }
 
+    public List<String> getListOfTransport(int option){
+        List<String> lstReturn = new ArrayList<String>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query;
+        switch (option){
+            case 1: query = "SELECT " + COLUMN_lineName + ", "+ COLUMN_lineID +" FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " LIKE 'Tv%' ";
+                break;
+            case 2: query = "SELECT " + COLUMN_lineName + ", "+ COLUMN_lineID +" FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " LIKE 'Tb%' ";
+                break;
+            case 3: query = "SELECT " + COLUMN_lineName + ", "+ COLUMN_lineID +" FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " LIKE 'E%' ";
+                break;
+            case 4: query = "SELECT " + COLUMN_lineName + ", "+ COLUMN_lineID +" FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + "NOT LIKE 'Tv%' AND " + COLUMN_lineName + "NOT LIKE 'Tb%' AND " + COLUMN_lineName + "NOT LIKE 'E%' ";
+                break;
+            default: query = "";
+
+        }
+        db.execSQL(query);
+
+        //Cursor point to a location in results
+        Cursor c = db.rawQuery(query, null);
+        //Move to the first raw in result
+        c.moveToFirst();
+
+        while (!c.isAfterLast()){
+            if (c.getString(c.getColumnIndex(COLUMN_lineName)) != null){
+                lstReturn.add(c.getString(c.getColumnIndex(COLUMN_lineName)));
+                c.moveToNext();
+            }
+        }
+        db.close();
+
+        return lstReturn;
+    }
+
+    public List<String> getListOfStations(String line){
+        List<String> lstReturn = new ArrayList<String>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query;
+        query = "SELECT " + COLUMN_friendlyStationName + " FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + "=\"" + line + "\";";
+
+        db.execSQL(query);
+
+        //Cursor point to a location in results
+        Cursor c = db.rawQuery(query, null);
+        //Move to the first raw in result
+        c.moveToFirst();
+
+        while (!c.isAfterLast()){
+            if (c.getString(c.getColumnIndex(COLUMN_friendlyStationName)) != null){
+                lstReturn.add(c.getString(c.getColumnIndex(COLUMN_friendlyStationName)));
+                c.moveToNext();
+            }
+        }
+        db.close();
+
+        return lstReturn;
+    }
     // Print data
     public String dbToString(String tableName, String columnName){
         String dbString = "";

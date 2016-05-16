@@ -125,9 +125,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         listDataChild = new HashMap<String, List<String>>();
 
         // Adding child data
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
+        listDataHeader.add("Tramvai");
+        listDataHeader.add("Trolebuz");
+        listDataHeader.add("Expres");
+        listDataHeader.add("Bus");
 
         // Adding child data
         List<String> top250 = new ArrayList<String>();

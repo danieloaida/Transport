@@ -25,9 +25,10 @@ public class CSVReader {
 
         try{
             String csvLine;
+            String[] row = new String[20];
             while((csvLine = reader.readLine()) != null){
-                String[] row = csvLine.split(",");
-                if (!(row[0].equals("LineID") || row[0].equals(""))) {
+                row = csvLine.split(",");
+                if (!(row.length != 0 || row[0].equals("LineID"))) {
                     Junction newItem = new Junction(row);
                     resultList.add(newItem);
                 }

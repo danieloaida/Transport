@@ -1,8 +1,11 @@
 package ro.ratt.transport;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,11 +30,17 @@ public class InitDB {
         InputStream inputStream = context.getResources().openRawResource(R.raw.junctions);
         csvReader = new CSVReader(inputStream);
 
-        List<Junction> jonctList = csvReader.read();
+        List<Junction> jonctList = new ArrayList<Junction>();
+        jonctList = csvReader.read();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if(!prefs.getBoolean("firstTime", false)) {
         for (Junction jData : jonctList){
             dbHandler.addJunction(jData);
         }
-
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("firstTime", true);
+            editor.commit();
+        }
         /*
         List<Station> list = new ArrayList<Station>();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
