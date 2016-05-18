@@ -131,33 +131,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         listDataHeader.add("Bus");
 
         // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
+        List<String> tram = new ArrayList<String>();
+        tram.addAll(dbHandler.getListOfTransport(1));
 
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
+        List<String> trolley = new ArrayList<String>();
+        trolley.addAll(dbHandler.getListOfTransport(2));
 
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");
+        List<String> express = new ArrayList<String>();
+        express.addAll(dbHandler.getListOfTransport(3));
 
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), nowShowing);
-        listDataChild.put(listDataHeader.get(2), comingSoon);
+        List<String> bus = new ArrayList<String>();
+        bus.addAll(dbHandler.getListOfTransport(4));
+
+        listDataChild.put(listDataHeader.get(0), tram); // Header, Child data
+        listDataChild.put(listDataHeader.get(1), trolley);
+        listDataChild.put(listDataHeader.get(2), express);
+        listDataChild.put(listDataHeader.get(2), bus);
     }
 
 

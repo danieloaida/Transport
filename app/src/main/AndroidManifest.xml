@@ -31,15 +31,15 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" >
-        </activity>
-        <activity
-            android:name=".BeginActivity"
-            android:label="Begin Activity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".BeginActivity"
+            android:label="Begin Activity">
         </activity>
     </application>
 

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.CheckedTextView;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -50,8 +51,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = infalInflater.inflate(R.layout.list_item, null);
         }
 
-        TextView txtListChild = (TextView) convertView
-                .findViewById(R.id.lblListItem);
+        CheckedTextView txtListChild = (CheckedTextView) convertView
+                .findViewById(R.id.ctvItem);
 
         txtListChild.setText(childText);
         return convertView;
