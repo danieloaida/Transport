@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Created by baby on 4/25/2016.
  */
@@ -26,12 +27,12 @@ public class CSVReader {
         try{
             String csvLine;
             String[] row = new String[20];
-            while((csvLine = reader.readLine()) != null){
+            csvLine = reader.readLine();
+            for (int i = 1;i<=1324;i++){                    )
                 row = csvLine.split(",");
-                if (!(row.length != 0 || row[0].equals("LineID"))) {
                     Junction newItem = new Junction(row);
                     resultList.add(newItem);
-                }
+                csvLine = reader.readLine();
             }
         } catch(IOException ex){
             throw new RuntimeException("Error in reading CSV file" + ex);

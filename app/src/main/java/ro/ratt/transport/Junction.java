@@ -4,6 +4,7 @@ package ro.ratt.transport;
  * Created by baby on 4/25/2016.
  */
 public class Junction {
+    private int index;
     private int lineID;
     private String lineName;
     private int stationID;
@@ -16,7 +17,8 @@ public class Junction {
     private boolean invalid;
     private String verificationDate;
 
-    public Junction(int lineID, String lineName, int stationID, String rawStationName, String friendlyStationName, String shortStationName, String junctionName, double lat, double lng, boolean invalid, String verificationDate) {
+    public Junction(int index, int lineID, String lineName, int stationID, String rawStationName, String friendlyStationName, String shortStationName, String junctionName, double lat, double lng, boolean invalid, String verificationDate) {
+        this.index = index;
         this.lineID = lineID;
         this.lineName = lineName;
         this.stationID = stationID;
@@ -31,40 +33,49 @@ public class Junction {
     }
 
     public Junction(String[] arrayItems) {
-        this.lineID = Integer.parseInt(arrayItems[0]);
-        this.lineName = arrayItems[1];
-        this.stationID = Integer.parseInt(arrayItems[2]);
-        this.rawStationName = arrayItems[3];
-        this.friendlyStationName = arrayItems[4];
-        this.shortStationName = arrayItems[5];
-        this.junctionName = arrayItems[6];
-        this.lat = Double.parseDouble(arrayItems[7]);
-        this.lng = Double.parseDouble(arrayItems[8]);
-        this.invalid = Boolean.parseBoolean(arrayItems[9]);
-        this.verificationDate = arrayItems[10];
+        this.index = Integer.parseInt(arrayItems[0]);
+        this.lineID = Integer.parseInt(arrayItems[1]);
+        this.lineName = arrayItems[2];
+        this.stationID = Integer.parseInt(arrayItems[3]);
+        this.rawStationName = arrayItems[4];
+        this.friendlyStationName = arrayItems[5];
+        this.shortStationName = arrayItems[6];
+        this.junctionName = arrayItems[7];
+        this.lat = Double.parseDouble(arrayItems[8]);
+        this.lng = Double.parseDouble(arrayItems[9]);
+        this.invalid = Boolean.parseBoolean(arrayItems[10]);
+        this.verificationDate = arrayItems[11];
 
     }
 
     public Junction parseJunction(String[] arrayItems) {
         Junction retObj;
-        int lineID = Integer.parseInt(arrayItems[0]);
-        String lineName = arrayItems[1];
-        int stationID = Integer.parseInt(arrayItems[2]);
-        String rawStationName = arrayItems[3];
-        String friendlyStationName = arrayItems[4];
-        String shortStationName = arrayItems[5];
-        String junctionName = arrayItems[6];
-        double lat = Double.parseDouble(arrayItems[7]);
-        double lng = Double.parseDouble(arrayItems[8]);
-        boolean invalid = Boolean.parseBoolean(arrayItems[9]);
-        String verificationDate = arrayItems[10];
+        int index = Integer.parseInt(arrayItems[0]);
+        int lineID = Integer.parseInt(arrayItems[1]);
+        String lineName = arrayItems[2];
+        int stationID = Integer.parseInt(arrayItems[3]);
+        String rawStationName = arrayItems[4];
+        String friendlyStationName = arrayItems[5];
+        String shortStationName = arrayItems[6];
+        String junctionName = arrayItems[7];
+        double lat = Double.parseDouble(arrayItems[8]);
+        double lng = Double.parseDouble(arrayItems[9]);
+        boolean invalid = Boolean.parseBoolean(arrayItems[10]);
+        String verificationDate = arrayItems[11];
 
-        retObj = new Junction(lineID, lineName, stationID, rawStationName, friendlyStationName, shortStationName, junctionName, lat, lng, invalid, verificationDate);
+        retObj = new Junction(index, lineID, lineName, stationID, rawStationName, friendlyStationName, shortStationName, junctionName, lat, lng, invalid, verificationDate);
 
         return retObj;
 
     }
 
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
     public int getLineID() {
         return lineID;
     }

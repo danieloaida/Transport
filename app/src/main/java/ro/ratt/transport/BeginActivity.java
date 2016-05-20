@@ -1,5 +1,6 @@
 package ro.ratt.transport;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,7 +38,11 @@ public class BeginActivity extends AppCompatActivity {
         };
 
         initialisation =  new Thread(process);
-
+        ProgressDialog dialog=new ProgressDialog(this);
+        dialog.setMessage("message");
+        dialog.setCancelable(false);
+        dialog.setInverseBackgroundForced(false);
+        dialog.show();
 
 
         new Thread(new Runnable() {
@@ -55,7 +60,7 @@ public class BeginActivity extends AppCompatActivity {
                         // ---0 - VISIBLE; 4 - INVISIBLE; 8 - GONE---
                         progressBar.setVisibility(View.GONE);
                         Intent intent = new Intent(BeginActivity.this, MapsActivity.class);
-                     //   intent.putExtra("dbLink", dbHandler);
+                    //    intent.putExtra("dbHandler", dbHandler.getWritableDatabase());
                         startActivity(intent);
                     }
                 });

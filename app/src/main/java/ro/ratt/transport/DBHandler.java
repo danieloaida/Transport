@@ -37,8 +37,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE " + TABLE_JUNCTIONS + "(" +
-                COLUMN_INDEX + " INTEGER PRIMARY KEY AUTOINCREMENT, "  +
+        String query = "CREATE TABLE IF NOT EXISTS " + TABLE_JUNCTIONS + " ( " +
+                COLUMN_INDEX + " INTEGER, "  +
                 COLUMN_lineID + " INTEGER, "  +
                 COLUMN_lineName + " TEXT, "  +
                 COLUMN_stationID + " INTEGER, "  +
@@ -64,6 +64,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public void addJunction(Junction junction){
         ContentValues values = new ContentValues();
         SQLiteDatabase db = getWritableDatabase();
+        values.put(COLUMN_INDEX, junction.getIndex());
         values.put(COLUMN_lineID, junction.getLineID());
         values.put(COLUMN_lineName, junction.getLineName());
         values.put(COLUMN_stationID, junction.getStationID());
@@ -88,7 +89,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public List<String> getListOfTransport(int option){
         List<String> lstReturn = new ArrayList<String>();
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         String query;
         switch (option){
             case 1: query = "SELECT " + COLUMN_lineName + ", "+ COLUMN_lineID +" FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " LIKE 'Tv%' ";
@@ -144,10 +145,10 @@ public class DBHandler extends SQLiteOpenHelper {
         return lstReturn;
     }
     // Print data
-    public String dbToString(String tableName, String columnName){
+    public String dbToString( String columnName){
         String dbString = "";
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT * FROM " + tableName + " WHERE 1";
+        String query = "SELECT * FROM " + TABLE_JUNCTIONS + " WHERE 1";
 
         //Cursor point to a location in results
         Cursor c = db.rawQuery(query, null);
