@@ -12,12 +12,13 @@ import java.util.List;
 /**
  * Created by baby on 4/6/2016.
  */
+
 public class DBHandler extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME ="transport.db";
 
     public static final String TABLE_JUNCTIONS = "junctions";
-    public static final String COLUMN_INDEX ="index";
+    public static final String COLUMN_INDEX ="nr_crt";
     public static final String COLUMN_lineID = "lineID";
     public static final String COLUMN_lineName = "lineName";
     public static final String COLUMN_stationID = "stationID";
@@ -37,19 +38,19 @@ public class DBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE IF NOT EXISTS " + TABLE_JUNCTIONS + " ( " +
-                COLUMN_INDEX + " INTEGER, "  +
-                COLUMN_lineID + " INTEGER, "  +
-                COLUMN_lineName + " TEXT, "  +
-                COLUMN_stationID + " INTEGER, "  +
-                COLUMN_rawStationName + " TEXT, "  +
-                COLUMN_friendlyStationName + " TEXT, "  +
-                COLUMN_shortStationName + " TEXT, "  +
-                COLUMN_junctionName + " TEXT, "  +
-                COLUMN_lat + " DOUBLE, "  +
-                COLUMN_lng + " DOUBLE "  +
-                COLUMN_invalid + " TEXT, "  +
-                COLUMN_verificationDate + " TEXT "  +
+        String query = "CREATE TABLE " + TABLE_JUNCTIONS + " ( '" +
+                COLUMN_INDEX + "' INTEGER, '"  +
+                COLUMN_lineID + "' INTEGER, '"  +
+                COLUMN_lineName + "' TEXT, '"  +
+                COLUMN_stationID + "' INTEGER, '"  +
+                COLUMN_rawStationName + "' TEXT, '"  +
+                COLUMN_friendlyStationName + "' TEXT, '"  +
+                COLUMN_shortStationName + "' TEXT, '"  +
+                COLUMN_junctionName + "' TEXT, '"  +
+                COLUMN_lat + "' DOUBLE, '"  +
+                COLUMN_lng + "' DOUBLE, '"  +
+                COLUMN_invalid + "' TEXT, '"  +
+                COLUMN_verificationDate + "' TEXT "  +
                 ");";
         db.execSQL(query);
     }
@@ -92,19 +93,17 @@ public class DBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         String query;
         switch (option){
-            case 1: query = "SELECT " + COLUMN_lineName + ", "+ COLUMN_lineID +" FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " LIKE 'Tv%' ";
+            case 1: query = "SELECT " + COLUMN_lineName + ", "+ COLUMN_lineID +" FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " LIKE 'Tv%' GROUP BY " + COLUMN_lineName;
                 break;
-            case 2: query = "SELECT " + COLUMN_lineName + ", "+ COLUMN_lineID +" FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " LIKE 'Tb%' ";
+            case 2: query = "SELECT " + COLUMN_lineName + ", "+ COLUMN_lineID +" FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " LIKE 'Tb%' GROUP BY " + COLUMN_lineName;
                 break;
-            case 3: query = "SELECT " + COLUMN_lineName + ", "+ COLUMN_lineID +" FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " LIKE 'E%' ";
+            case 3: query = "SELECT " + COLUMN_lineName + ", "+ COLUMN_lineID +" FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " LIKE 'E%' GROUP BY " + COLUMN_lineName;
                 break;
-            case 4: query = "SELECT " + COLUMN_lineName + ", "+ COLUMN_lineID +" FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + "NOT LIKE 'Tv%' AND " + COLUMN_lineName + "NOT LIKE 'Tb%' AND " + COLUMN_lineName + "NOT LIKE 'E%' ";
+            case 4: query = "SELECT " + COLUMN_lineName + ", "+ COLUMN_lineID +" FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " NOT LIKE 'Tv%' AND " + COLUMN_lineName + " NOT LIKE 'Tb%' AND " + COLUMN_lineName + " NOT LIKE 'E%' GROUP BY " + COLUMN_lineName;
                 break;
             default: query = "";
 
         }
-        db.execSQL(query);
-
         //Cursor point to a location in results
         Cursor c = db.rawQuery(query, null);
         //Move to the first raw in result
@@ -125,9 +124,8 @@ public class DBHandler extends SQLiteOpenHelper {
         List<String> lstReturn = new ArrayList<String>();
         SQLiteDatabase db = this.getWritableDatabase();
         String query;
-        query = "SELECT " + COLUMN_friendlyStationName + " FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + "=\"" + line + "\";";
 
-        db.execSQL(query);
+        query = "SELECT " + COLUMN_friendlyStationName + " FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + "=\"" + line + "\";";
 
         //Cursor point to a location in results
         Cursor c = db.rawQuery(query, null);

@@ -53,56 +53,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        dialog=new ProgressDialog(MapsActivity.this);
         dbHandler = new DBHandler(this, null, null, 1);
         initDB = new InitDB(this, dbHandler);
 
-        process = new Runnable() {
-            public void run() {
-                initDB.StartInit();
-            }
-        };
-
-        initialisation =  new Thread(process);
-        dialog.setMessage("message");
-        dialog.setCancelable(false);
-        dialog.setInverseBackgroundForced(false);
-        dialog.setMax(200);
-
-
-
-        /*new Thread(new Runnable() {
-            public void run() {
-                while (progressStatus < 200) {
-                    progressStatus = doSomeWork();
-                    handler.post(new Runnable() {
-                        public void run() {
-                            dialog.setProgress(progressStatus);
-                        }
-                    });
-                }
-                handler.post(new Runnable() {
-                    public void run() {
-                        // ---0 - VISIBLE; 4 - INVISIBLE; 8 - GONE---
-                        dialog.hide();
-                    }
-                });
-            }
-
-            private int doSomeWork() {
-                try {
-                    initDB.StartInit();
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return ++progress;
-            }
-        }).start();*/
-
 
         initDB.StartInit();
-        String TEST = dbHandler.dbToString("index");
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ExpandableListView) findViewById(R.id.left_drawer);
@@ -204,7 +159,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         listDataChild.put(listDataHeader.get(0), tram); // Header, Child data
         listDataChild.put(listDataHeader.get(1), trolley);
         listDataChild.put(listDataHeader.get(2), express);
-        listDataChild.put(listDataHeader.get(2), bus);
+        listDataChild.put(listDataHeader.get(3), bus);
     }
 
 

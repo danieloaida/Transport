@@ -14,10 +14,10 @@ public class Junction {
     private String junctionName;
     private double lat;
     private double lng;
-    private boolean invalid;
+    private String invalid;
     private String verificationDate;
 
-    public Junction(int index, int lineID, String lineName, int stationID, String rawStationName, String friendlyStationName, String shortStationName, String junctionName, double lat, double lng, boolean invalid, String verificationDate) {
+    public Junction(int index, int lineID, String lineName, int stationID, String rawStationName, String friendlyStationName, String shortStationName, String junctionName, double lat, double lng, String invalid, String verificationDate) {
         this.index = index;
         this.lineID = lineID;
         this.lineName = lineName;
@@ -43,7 +43,7 @@ public class Junction {
         this.junctionName = arrayItems[7];
         this.lat = Double.parseDouble(arrayItems[8]);
         this.lng = Double.parseDouble(arrayItems[9]);
-        this.invalid = Boolean.parseBoolean(arrayItems[10]);
+        this.invalid = arrayItems[10];
         this.verificationDate = arrayItems[11];
 
     }
@@ -60,7 +60,7 @@ public class Junction {
         String junctionName = arrayItems[7];
         double lat = Double.parseDouble(arrayItems[8]);
         double lng = Double.parseDouble(arrayItems[9]);
-        boolean invalid = Boolean.parseBoolean(arrayItems[10]);
+        String invalid = arrayItems[10];
         String verificationDate = arrayItems[11];
 
         retObj = new Junction(index, lineID, lineName, stationID, rawStationName, friendlyStationName, shortStationName, junctionName, lat, lng, invalid, verificationDate);
@@ -148,11 +148,11 @@ public class Junction {
         this.lng = lng;
     }
 
-    public boolean isInvalid() {
+    public String isInvalid() {
         return invalid;
     }
 
-    public void setInvalid(boolean invalid) {
+    public void setInvalid(String invalid) {
         this.invalid = invalid;
     }
 
