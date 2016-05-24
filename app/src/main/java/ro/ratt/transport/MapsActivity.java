@@ -1,8 +1,6 @@
 package ro.ratt.transport;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
@@ -29,19 +27,14 @@ import java.util.List;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private DBHandler dbHandler;
     private InitDB initDB;
-    private Thread initialisation;
-    private Runnable process;
-
-    private int progress = 0;
+    private MapHandler mapHandler;
     private DrawerLayout mDrawerLayout;
     private ExpandableListAdapter listAdapter;
     private ExpandableListView mDrawerList;
     private GoogleMap mMap;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
-    ProgressDialog dialog;
-    private int progressStatus = 0;
-    private Handler handler = new Handler();
+    List<MapStation> mapStationList;
 
 
     @Override
@@ -53,20 +46,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        mapStationList = new ArrayList<MapStation>();
         dbHandler = new DBHandler(this, null, null, 1);
         initDB = new InitDB(this, dbHandler);
-
 
         initDB.StartInit();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ExpandableListView) findViewById(R.id.left_drawer);
-
+        mapHandler = new MapHandler(mapStationList,mMap,dbHandler);
         // Set the adapter for the list view
        // mDrawerList.setAdapter(new ArrayAdapter<String>(this,
               //  R.layout.drawer_list_item, mPlanetTitles));
 
-     //   mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         // preparing list data
         prepareListData();
 
@@ -126,6 +119,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 listDataHeader.get(groupPosition)).get(
                                 childPosition), Toast.LENGTH_SHORT)
                         .show();
+
+                String StationName = listDataChild.get(
+                        listDataHeader.get(groupPosition)).get(
+                        childPosition);
+
+                mapHandler.addLineStations(StationName);
+                //v.setBackgroundColor(Color.CYAN);
                 return false;
             }
         });
@@ -179,6 +179,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         CameraUpdate zoom=CameraUpdateFactory.zoomTo(11);
+
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(45.756,21.229);

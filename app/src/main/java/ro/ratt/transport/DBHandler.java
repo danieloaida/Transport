@@ -120,12 +120,16 @@ public class DBHandler extends SQLiteOpenHelper {
         return lstReturn;
     }
 
-    public List<String> getListOfStations(String line){
-        List<String> lstReturn = new ArrayList<String>();
+    public List<Station> getListOfStations(String line){
+        List<Station> lstReturn = new ArrayList<Station>();
+        Station station;
         SQLiteDatabase db = this.getWritableDatabase();
         String query;
-
-        query = "SELECT " + COLUMN_friendlyStationName + " FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + "=\"" + line + "\";";
+        String name;
+        double lat;
+        double lng;
+        int id_st;
+        query = "SELECT " + COLUMN_friendlyStationName + ", "+ COLUMN_lat + ", " + COLUMN_lng + ", " + COLUMN_stationID  + " FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + "=\"" + line + "\";";
 
         //Cursor point to a location in results
         Cursor c = db.rawQuery(query, null);
@@ -133,10 +137,17 @@ public class DBHandler extends SQLiteOpenHelper {
         c.moveToFirst();
 
         while (!c.isAfterLast()){
-            if (c.getString(c.getColumnIndex(COLUMN_friendlyStationName)) != null){
-                lstReturn.add(c.getString(c.getColumnIndex(COLUMN_friendlyStationName)));
-                c.moveToNext();
-            }
+
+            name = c.getString(c.getColumnIndex(COLUMN_friendlyStationName));
+            String s = c.getString(c.getColumnIndex(COLUMN_lat));
+            lat = Double.parseDouble(s);
+            s = c.getString(c.getColumnIndex(COLUMN_lng));
+            lng = Double.parseDouble(s);
+            id_st = Integer.parseInt(c.getString(c.getColumnIndex(COLUMN_stationID)));
+            station = new Station(name, lat, lng, id_st);
+            lstReturn.add(station);
+
+            c.moveToNext();
         }
         db.close();
 
