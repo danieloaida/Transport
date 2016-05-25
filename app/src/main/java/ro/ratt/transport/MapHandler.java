@@ -5,15 +5,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by baby on 5/24/2016.
  */
 public class MapHandler {
-    List<MapStation> mapStationList = new ArrayList<MapStation>();
-    GoogleMap mMap;
-    DBHandler dbHandler;
+    private List<MapStation> mapStationList = new ArrayList<MapStation>();
+    private GoogleMap mMap;
+    private DBHandler dbHandler;
 
     public MapHandler(List<MapStation> mapStationList, GoogleMap mMap, DBHandler dbHandler) {
         this.mapStationList = mapStationList;
@@ -37,12 +38,23 @@ public class MapHandler {
             mark.position(new LatLng(sItem.getLat(), sItem.getLng()));
             mark.title(sItem.getName());
             mMap.addMarker(mark);
-            addStation(mark,sItem.getName());
+            addStation(mark, line);
         }
-
 
     }
 
+    public void removeLineStations(String line){
+
+        for (Iterator<MapStation> iter = mapStationList.listIterator(); iter.hasNext();){
+            MapStation mItem = iter.next();
+            if (mapStationList.contains(new MapStation(null, line))){
+                mItem.marker.visible(Boolean.FALSE);
+                iter.remove();
+            }
+
+        }
+
+    }
 
 
 
@@ -72,6 +84,22 @@ class MapStation {
         this.marker = marker;
         this.lineName = lineName;
         this.lineID = lineID;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MapStation that = (MapStation) o;
+
+        return lineName.equals(that.lineName);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return lineName.hashCode();
     }
 
     public MapStation(MarkerOptions marker, String lineName) {

@@ -1,6 +1,7 @@
 package ro.ratt.transport;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,11 +20,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<String> listHeader;
     private HashMap<String, List<String>> listChild;
+    private List<MapStation> mapStationList;
 
-    public ExpandableListAdapter(Context context, List<String> listHeader, HashMap<String, List<String>> listChild) {
+    public ExpandableListAdapter(Context context, List<String> listHeader, HashMap<String, List<String>> listChild, List<MapStation> mapStationList) {
         this.context = context;
         this.listHeader = listHeader;
         this.listChild = listChild;
+        this.mapStationList = mapStationList;
     }
 
 
@@ -51,9 +54,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = infalInflater.inflate(R.layout.list_item, null);
         }
 
+
         CheckedTextView txtListChild = (CheckedTextView) convertView
                 .findViewById(R.id.ctvItem);
-
+        if (mapStationList.contains(new MapStation(null, childText))){
+            txtListChild.setBackgroundColor(Color.CYAN);
+        } else{
+            txtListChild.setBackgroundColor(Color.WHITE);
+        }
         txtListChild.setText(childText);
         return convertView;
     }

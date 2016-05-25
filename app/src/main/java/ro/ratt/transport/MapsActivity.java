@@ -1,5 +1,6 @@
 package ro.ratt.transport;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
@@ -32,9 +33,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ExpandableListAdapter listAdapter;
     private ExpandableListView mDrawerList;
     private GoogleMap mMap;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
-    List<MapStation> mapStationList;
+    private List<String> listDataHeader;
+    private HashMap<String, List<String>> listDataChild;
+    private List<MapStation> mapStationList;
 
 
     @Override
@@ -54,21 +55,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ExpandableListView) findViewById(R.id.left_drawer);
-        mapHandler = new MapHandler(mapStationList,mMap,dbHandler);
         // Set the adapter for the list view
        // mDrawerList.setAdapter(new ArrayAdapter<String>(this,
               //  R.layout.drawer_list_item, mPlanetTitles));
 
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-        // preparing list data
+
         prepareListData();
 
-        listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+        listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild, mapStationList);
 
-        // setting list adapter
         mDrawerList.setAdapter(listAdapter);
 
-        // Listview Group click listener
         mDrawerList.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 
             @Override
@@ -124,8 +122,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         listDataHeader.get(groupPosition)).get(
                         childPosition);
 
-                mapHandler.addLineStations(StationName);
-                //v.setBackgroundColor(Color.CYAN);
+                if (mapStationList.contains(new MapStation(null, StationName))){
+                    mapHandler.removeLineStations(StationName);
+                    v.setBackgroundColor(Color.WHITE);
+                } else{
+                    mapHandler.addLineStations(StationName);
+                    v.setBackgroundColor(Color.CYAN);
+                }
                 return false;
             }
         });
@@ -177,6 +180,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mapHandler = new MapHandler(mapStationList,mMap,dbHandler);
 
         CameraUpdate zoom=CameraUpdateFactory.zoomTo(11);
 

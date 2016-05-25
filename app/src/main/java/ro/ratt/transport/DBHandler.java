@@ -129,7 +129,7 @@ public class DBHandler extends SQLiteOpenHelper {
         double lat;
         double lng;
         int id_st;
-        query = "SELECT " + COLUMN_friendlyStationName + ", "+ COLUMN_lat + ", " + COLUMN_lng + ", " + COLUMN_stationID  + " FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + "=\"" + line + "\";";
+        query = "SELECT " + COLUMN_friendlyStationName + ", "+ COLUMN_lat + ", " + COLUMN_lng + ", " + COLUMN_stationID  + " FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + "=\"" + line + "\" AND "+ COLUMN_invalid + " != 'TRUE';";
 
         //Cursor point to a location in results
         Cursor c = db.rawQuery(query, null);
