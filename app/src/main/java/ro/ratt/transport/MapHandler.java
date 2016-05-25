@@ -2,6 +2,7 @@ package ro.ratt.transport;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -22,9 +23,9 @@ public class MapHandler {
         this.dbHandler = dbHandler;
     }
 
-    public void addStation(MarkerOptions markerOptions, String lineName){
+    public void addStation(Marker marker, String lineName){
         MapStation mapStation;
-        mapStation = new MapStation(markerOptions, lineName);
+        mapStation = new MapStation(marker, lineName);
         mapStationList.add(mapStation);
 
     }
@@ -37,8 +38,8 @@ public class MapHandler {
             MarkerOptions mark = new MarkerOptions();
             mark.position(new LatLng(sItem.getLat(), sItem.getLng()));
             mark.title(sItem.getName());
-            mMap.addMarker(mark);
-            addStation(mark, line);
+            Marker marker = mMap.addMarker(mark);
+            addStation(marker, line);
         }
 
     }
@@ -48,7 +49,7 @@ public class MapHandler {
         for (Iterator<MapStation> iter = mapStationList.listIterator(); iter.hasNext();){
             MapStation mItem = iter.next();
             if (mapStationList.contains(new MapStation(null, line))){
-                mItem.marker.visible(Boolean.FALSE);
+                mItem.marker.remove();
                 iter.remove();
             }
 
@@ -76,11 +77,11 @@ public class MapHandler {
 }
 
 class MapStation {
-    MarkerOptions marker;
+    Marker marker;
     String lineName;
     int lineID;
 
-    public MapStation(MarkerOptions marker, String lineName, int lineID) {
+    public MapStation(Marker marker, String lineName, int lineID) {
         this.marker = marker;
         this.lineName = lineName;
         this.lineID = lineID;
@@ -102,17 +103,17 @@ class MapStation {
         return lineName.hashCode();
     }
 
-    public MapStation(MarkerOptions marker, String lineName) {
+    public MapStation(Marker marker, String lineName) {
         this.marker = marker;
         this.lineName = lineName;
         this.lineID = -1;
     }
 
-    public MarkerOptions getMarker() {
+    public Marker getMarker() {
         return marker;
     }
 
-    public void setMarker(MarkerOptions marker) {
+    public void setMarker(Marker marker) {
         this.marker = marker;
     }
 

@@ -182,6 +182,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mapHandler = new MapHandler(mapStationList,mMap,dbHandler);
 
+        mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapt(this));
         CameraUpdate zoom=CameraUpdateFactory.zoomTo(11);
 
 
@@ -190,6 +191,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(sydney).title("Timisoara"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.animateCamera(zoom);
+
+        if (mMap != null)
+        {
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
+            {
+                @Override
+                public boolean onMarkerClick(com.google.android.gms.maps.model.Marker marker)
+                {
+                    marker.showInfoWindow();
+                    return true;
+                }
+            });
+        }
 
     }
 
