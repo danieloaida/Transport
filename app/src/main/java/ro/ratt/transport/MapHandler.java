@@ -38,6 +38,7 @@ public class MapHandler {
             MarkerOptions mark = new MarkerOptions();
             mark.position(new LatLng(sItem.getLat(), sItem.getLng()));
             mark.title(sItem.getName());
+            mark.snippet(String.valueOf(sItem.getId_st() + "," + sItem.getId_line()));
             Marker marker = mMap.addMarker(mark);
             addStation(marker, line);
         }
