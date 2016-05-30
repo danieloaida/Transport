@@ -16,7 +16,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -185,12 +184,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapt(this));
         CameraUpdate zoom=CameraUpdateFactory.zoomTo(11);
 
-
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(45.756,21.229);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Timisoara"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.animateCamera(zoom);
+        try {
+            mMap.setMyLocationEnabled(true);
+        } catch (SecurityException e){}
 
         if (mMap != null)
         {

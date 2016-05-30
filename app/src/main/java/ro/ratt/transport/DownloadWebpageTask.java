@@ -72,8 +72,8 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
 
             // Convert the InputStream into a string
             String contentAsString = readIt(is, len);
-            //String converted = GetListValues(contentAsString);
-            return contentAsString;
+            String converted = GetListValues(contentAsString);
+            return converted;
 
             // Makes sure that the InputStream is closed after the app is
             // finished using it.
@@ -91,18 +91,6 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         char[] buffer = new char[len];
         reader.read(buffer);
         return new String(buffer);
-     /* String sors = "";
-        int ch;
-        char p='p';
-        while (((ch = stream.read()) != -1)){
-
-            p = (char) ch;
-
-            sors+=Character.toString(p);
-
-        }
-        stream.close();
-    return sors;*/
     }
 
     public String GetListValues(String input) {
@@ -113,20 +101,17 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         String _value = "";
         String returnValue = "";
         String _name = "";
-        String _entrySpliter = "<OPTION   value=\"";
-        String _nameBegin = "\"  >";
-        String _nameEnd = "<";
-        _index = input.indexOf(_entrySpliter);
-        while (_index != -1){
-            _endOfValue = input.indexOf("\"", _index);
-            _value = input.substring(_index + _entrySpliter.length(), _endOfValue);
-            _endOfName = input.indexOf(_nameEnd, _index);
-            _name = input.substring(_endOfValue + _nameBegin.length(), _endOfName);
-            _index = input.indexOf(_entrySpliter);
-            returnValue.concat("Value = " + _value);
-            returnValue.concat(" Station = " + _name + "\n");
+        String _entrySpliter = "Sosire1:";
+        String _nameBegin = "Linia: </font>";
+        String _nameEnd = "<br>";
+        _index = input.indexOf(_nameBegin, _index);
+        _endOfName = input.indexOf(_nameEnd, _index);
+        _name = input.substring(_index + _nameBegin.length(), _endOfName);
 
-        }
+        _index = input.indexOf(_entrySpliter, _index);
+        _endOfValue = input.indexOf("<br>", _index);
+        _value = input.substring(_index + _entrySpliter.length(), _endOfValue);
+        returnValue = _name + " " + _value + "\n";
         return returnValue;
     }
 
