@@ -1,9 +1,13 @@
 package ro.ratt.transport;
 
+import android.graphics.Color;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,15 +37,20 @@ public class MapHandler {
     public void addLineStations(String line){
         List<Station> stations = new ArrayList<Station>();
         stations.addAll(dbHandler.getListOfStations(line));
-
+        Polyline route;
+        PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
         for(Station sItem : stations){
             MarkerOptions mark = new MarkerOptions();
-            mark.position(new LatLng(sItem.getLat(), sItem.getLng()));
+            LatLng coord = new LatLng(sItem.getLat(), sItem.getLng());
+            options.add(coord);
+            mark.position(coord);
             mark.title(sItem.getName());
             mark.snippet(String.valueOf(sItem.getId_st() + "," + sItem.getId_line()));
             Marker marker = mMap.addMarker(mark);
             addStation(marker, line);
         }
+
+        route = mMap.addPolyline(options);
 
     }
 
