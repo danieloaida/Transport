@@ -179,7 +179,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mapHandler = new MapHandler(mapStationList,mMap,dbHandler);
+        mapHandler = new MapHandler(mapStationList,mMap,dbHandler,this.getApplicationContext());
 
         mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapt(this));
         CameraUpdate zoom=CameraUpdateFactory.zoomTo(11);

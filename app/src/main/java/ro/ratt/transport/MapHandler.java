@@ -1,5 +1,6 @@
 package ro.ratt.transport;
 
+import android.content.Context;
 import android.graphics.Color;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -10,8 +11,10 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by baby on 5/24/2016.
@@ -20,11 +23,13 @@ public class MapHandler {
     private List<MapStation> mapStationList = new ArrayList<MapStation>();
     private GoogleMap mMap;
     private DBHandler dbHandler;
+    private Context context;
 
-    public MapHandler(List<MapStation> mapStationList, GoogleMap mMap, DBHandler dbHandler) {
+    public MapHandler(List<MapStation> mapStationList, GoogleMap mMap, DBHandler dbHandler, Context context) {
         this.mapStationList = mapStationList;
         this.mMap = mMap;
         this.dbHandler = dbHandler;
+        this.context = context;
     }
 
     public void addStation(Marker marker, String lineName){
@@ -38,7 +43,9 @@ public class MapHandler {
         List<Station> stations = new ArrayList<Station>();
         stations.addAll(dbHandler.getListOfStations(line));
         Polyline route;
+        int lastItem = 0;
         PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+        Station preStation = null;
         for(Station sItem : stations){
             MarkerOptions mark = new MarkerOptions();
             LatLng coord = new LatLng(sItem.getLat(), sItem.getLng());
@@ -48,9 +55,14 @@ public class MapHandler {
             mark.snippet(String.valueOf(sItem.getId_st() + "," + sItem.getId_line()));
             Marker marker = mMap.addMarker(mark);
             addStation(marker, line);
+            if (lastItem > 1){
+            findDirections(preStation.getLat(), preStation.getLng(),sItem.getLat(),sItem.getLng(),"driving");}
+            lastItem++;
+            preStation = sItem;
         }
 
-        route = mMap.addPolyline(options);
+        lastItem--;
+       // findDirections(stations.get(1).getLat(), stations.get(1).getLng(),stations.get(10).getLat(),stations.get(10).getLng(),"driving");
 
     }
 
@@ -67,6 +79,30 @@ public class MapHandler {
 
     }
 
+    public void findDirections(double fromPositionDoubleLat, double fromPositionDoubleLong, double toPositionDoubleLat, double toPositionDoubleLong, String mode)
+    {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(GetDirectionsAsyncTask.USER_CURRENT_LAT, String.valueOf(fromPositionDoubleLat));
+        map.put(GetDirectionsAsyncTask.USER_CURRENT_LONG, String.valueOf(fromPositionDoubleLong));
+        map.put(GetDirectionsAsyncTask.DESTINATION_LAT, String.valueOf(toPositionDoubleLat));
+        map.put(GetDirectionsAsyncTask.DESTINATION_LONG, String.valueOf(toPositionDoubleLong));
+        map.put(GetDirectionsAsyncTask.DIRECTIONS_MODE, mode);
+
+        GetDirectionsAsyncTask asyncTask = new GetDirectionsAsyncTask(context, mMap);
+        asyncTask.execute(map);
+    }
+
+    public void handleGetDirectionsResult(ArrayList<LatLng> directionPoints) {
+        PolylineOptions rectLine = new PolylineOptions().width(5).color(Color.RED);
+
+        for(int i = 0 ; i < directionPoints.size() ; i++)
+        {
+            rectLine.add(directionPoints.get(i));
+        }
+
+        Polyline newPolyline = mMap.addPolyline(rectLine);
+
+    }
 
 
     public List<MapStation> getMapStationList() {
