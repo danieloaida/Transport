@@ -30,6 +30,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public static final String COLUMN_lng = "lng";
     public static final String COLUMN_invalid = "invalid";
     public static final String COLUMN_verificationDate = "verificationDate";
+    public static final String COLUMN_route = "route";
 
     public DBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
@@ -50,7 +51,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 COLUMN_lat + "' DOUBLE, '"  +
                 COLUMN_lng + "' DOUBLE, '"  +
                 COLUMN_invalid + "' TEXT, '"  +
-                COLUMN_verificationDate + "' TEXT "  +
+                COLUMN_verificationDate + "' TEXT, "  +
+                COLUMN_route + "' TEXT "  +
                 ");";
         db.execSQL(query);
     }
@@ -77,6 +79,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(COLUMN_lng, junction.getLng());
         values.put(COLUMN_invalid, junction.isInvalid());
         values.put(COLUMN_verificationDate, junction.getVerificationDate());
+        values.put(COLUMN_route, junction.getRoute());
         db.insert(TABLE_JUNCTIONS, null, values);
         db.close();
     }
@@ -120,7 +123,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return lstReturn;
     }
 
-    public List<Station> getListOfStations(String line){
+    public List<Station> getListOfStations(String line, String route){
         List<Station> lstReturn = new ArrayList<Station>();
         Station station;
         SQLiteDatabase db = this.getWritableDatabase();
@@ -130,7 +133,7 @@ public class DBHandler extends SQLiteOpenHelper {
         double lng;
         int id_st;
         int id_line;
-        query = "SELECT " + COLUMN_friendlyStationName + ", "+ COLUMN_lat + ", " + COLUMN_lng + ", " + COLUMN_stationID + ", " + COLUMN_lineID  + " FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + "=\"" + line + "\" AND "+ COLUMN_invalid + " != 'TRUE';";
+        query = "SELECT " + COLUMN_friendlyStationName + ", "+ COLUMN_lat + ", " + COLUMN_lng + ", " + COLUMN_stationID + ", " + COLUMN_lineID  + " FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " = \"" + line + " AND " + COLUMN_route + " = \"" + route + " AND "+ COLUMN_invalid + " != 'TRUE';";
 
         //Cursor point to a location in results
         Cursor c = db.rawQuery(query, null);
@@ -147,7 +150,7 @@ public class DBHandler extends SQLiteOpenHelper {
             id_st = Integer.parseInt(c.getString(c.getColumnIndex(COLUMN_stationID)));
             id_line = Integer.parseInt(c.getString(c.getColumnIndex(COLUMN_lineID)));
 
-            station = new Station(name, lat, lng, id_st, id_line);
+            station = new Station(name, lat, lng, id_st, id_line, route);
             lstReturn.add(station);
 
             c.moveToNext();

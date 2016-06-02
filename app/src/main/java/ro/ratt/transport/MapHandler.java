@@ -6,7 +6,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
@@ -34,10 +33,9 @@ public class MapHandler {
 
     }
 
-    public void addLineStations(String line){
+    public void addLineStations(String line, String route){
         List<Station> stations = new ArrayList<Station>();
-        stations.addAll(dbHandler.getListOfStations(line));
-        Polyline route;
+        stations.addAll(dbHandler.getListOfStations(line, route));
         PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
         for(Station sItem : stations){
             MarkerOptions mark = new MarkerOptions();
@@ -50,7 +48,6 @@ public class MapHandler {
             addStation(marker, line);
         }
 
-        route = mMap.addPolyline(options);
 
     }
 

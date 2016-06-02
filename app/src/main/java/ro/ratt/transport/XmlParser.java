@@ -70,7 +70,7 @@ public class XmlParser {
 
         parser.nextTag();
         parser.require(XmlPullParser.END_TAG, ns, "marker");
-        return new Station(name, lat, lng, id_st,0);
+        return new Station(name, lat, lng, id_st,0,"");
     }
 
 

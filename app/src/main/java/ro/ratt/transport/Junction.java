@@ -16,8 +16,9 @@ public class Junction {
     private double lng;
     private String invalid;
     private String verificationDate;
+    private String route;
 
-    public Junction(int index, int lineID, String lineName, int stationID, String rawStationName, String friendlyStationName, String shortStationName, String junctionName, double lat, double lng, String invalid, String verificationDate) {
+    public Junction(int index, int lineID, String lineName, int stationID, String rawStationName, String friendlyStationName, String shortStationName, String junctionName, double lat, double lng, String invalid, String verificationDate, String route) {
         this.index = index;
         this.lineID = lineID;
         this.lineName = lineName;
@@ -30,6 +31,7 @@ public class Junction {
         this.lng = lng;
         this.invalid = invalid;
         this.verificationDate = verificationDate;
+        this.route = route;
     }
 
     public Junction(String[] arrayItems) {
@@ -45,6 +47,7 @@ public class Junction {
         this.lng = Double.parseDouble(arrayItems[9]);
         this.invalid = arrayItems[10];
         this.verificationDate = arrayItems[11];
+        this.route = arrayItems[12];
 
     }
 
@@ -62,11 +65,20 @@ public class Junction {
         double lng = Double.parseDouble(arrayItems[9]);
         String invalid = arrayItems[10];
         String verificationDate = arrayItems[11];
+        String route = arrayItems[12];
 
-        retObj = new Junction(index, lineID, lineName, stationID, rawStationName, friendlyStationName, shortStationName, junctionName, lat, lng, invalid, verificationDate);
+        retObj = new Junction(index, lineID, lineName, stationID, rawStationName, friendlyStationName, shortStationName, junctionName, lat, lng, invalid, verificationDate, route);
 
         return retObj;
 
+    }
+
+    public String getRoute() {
+        return route;
+    }
+
+    public void setRoute(String route) {
+        this.route = route;
     }
 
     public int getIndex() {

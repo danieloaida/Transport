@@ -3,7 +3,6 @@ package ro.ratt.transport;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.opencsv.CSVReader;
 
@@ -37,7 +36,7 @@ public class InitDB {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (!prefs.getBoolean("firstTime", false)) {
 
-            InputStream inputStream = context.getResources().openRawResource(R.raw.junctionsnn);
+            InputStream inputStream = context.getResources().openRawResource(R.raw.junctions);
             CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream));
             try{
 
@@ -52,12 +51,9 @@ public class InitDB {
         } catch (IOException e) {
                 e.printStackTrace();
             }
-            Integer i = 0;
             for (String[] jData : jonctList) {
                 Junction tmpJunction = new Junction(jData);
                 dbHandler.addJunction(tmpJunction);
-                Log.i("counter ", i.toString());
-                i++;
             }
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("firstTime", true);

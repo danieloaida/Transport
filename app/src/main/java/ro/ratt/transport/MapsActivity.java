@@ -35,6 +35,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listDataChild;
     private List<MapStation> mapStationList;
+    private List<LineInfo> lstLineAvl;
 
 
     @Override
@@ -117,16 +118,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 childPosition), Toast.LENGTH_SHORT)
                         .show();
 
-                String StationName = listDataChild.get(
+                String LineName = listDataChild.get(
                         listDataHeader.get(groupPosition)).get(
                         childPosition);
 
-                if (mapStationList.contains(new MapStation(null, StationName))){
-                    mapHandler.removeLineStations(StationName);
+
+                if (lstLineAvl.contains(new LineInfo(LineName, "route1"))){
+                    mapHandler.removeLineStations(LineName);
+                    mapHandler.addLineStations(LineName, "route2");
+                    lstLineAvl.add(new LineInfo(LineName, "route2"));
                     v.setBackgroundColor(Color.WHITE);
-                } else{
-                    mapHandler.addLineStations(StationName);
-                    v.setBackgroundColor(Color.CYAN);
+                } else {
+                    if (lstLineAvl.contains(new LineInfo(LineName, "route2"))) {
+                        mapHandler.removeLineStations(LineName);
+                        lstLineAvl.remove(new LineInfo(LineName, "route2"));
+                        v.setBackgroundColor(Color.WHITE);
+                    } else {
+                        mapHandler.addLineStations(LineName, "route1");
+                        lstLineAvl.add(new LineInfo(LineName, "route1"));
+                        v.setBackgroundColor(Color.CYAN);
+                    }
                 }
                 return false;
             }

@@ -10,13 +10,19 @@ public class Station {
     private final double lng;
     private final int id_st;
     private final int id_line;
+    private final String route;
 
-    public Station(String name, double lat, double lng, int id_st, int id_line) {
+    public Station(String name, double lat, double lng, int id_st, int id_line, String route) {
         this.name = name;
         this.lat = lat;
         this.lng = lng;
         this.id_st = id_st;
         this.id_line = id_line;
+        this.route = route;
+    }
+
+    public String getRoute() {
+        return route;
     }
 
     public int getId_line() {
