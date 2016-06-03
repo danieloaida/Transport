@@ -47,7 +47,7 @@ public class Junction {
         this.lng = Double.parseDouble(arrayItems[9]);
         this.invalid = arrayItems[10];
         this.verificationDate = arrayItems[11];
-        this.route = arrayItems[12];
+        this.route = arrayItems[13];
 
     }
 
@@ -65,7 +65,7 @@ public class Junction {
         double lng = Double.parseDouble(arrayItems[9]);
         String invalid = arrayItems[10];
         String verificationDate = arrayItems[11];
-        String route = arrayItems[12];
+        String route = arrayItems[13];
 
         retObj = new Junction(index, lineID, lineName, stationID, rawStationName, friendlyStationName, shortStationName, junctionName, lat, lng, invalid, verificationDate, route);
 

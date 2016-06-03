@@ -12,6 +12,24 @@ public class LineInfo {
         this.route = route;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LineInfo lineInfo = (LineInfo) o;
+
+        return ((lineName.equals(lineInfo.getLineName()))&&(route.equals(lineInfo.getRoute())));
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = lineName != null ? lineName.hashCode() : 0;
+        result = 31 * result + (route != null ? route.hashCode() : 0);
+        return result;
+    }
+
     public String getLineName() {
         return lineName;
     }

@@ -48,6 +48,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         mapStationList = new ArrayList<MapStation>();
+        lstLineAvl = new ArrayList<LineInfo>();
         dbHandler = new DBHandler(this, null, null, 1);
         initDB = new InitDB(this, dbHandler);
 
@@ -122,12 +123,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         listDataHeader.get(groupPosition)).get(
                         childPosition);
 
-
                 if (lstLineAvl.contains(new LineInfo(LineName, "route1"))){
                     mapHandler.removeLineStations(LineName);
                     mapHandler.addLineStations(LineName, "route2");
-                    lstLineAvl.add(new LineInfo(LineName, "route2"));
-                    v.setBackgroundColor(Color.WHITE);
+                    lstLineAvl.remove(new LineInfo(LineName, "route1"));
+                            lstLineAvl.add(new LineInfo(LineName, "route2"));
+                    v.setBackgroundColor(Color.GREEN);
                 } else {
                     if (lstLineAvl.contains(new LineInfo(LineName, "route2"))) {
                         mapHandler.removeLineStations(LineName);
@@ -193,10 +194,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapHandler = new MapHandler(mapStationList,mMap,dbHandler);
 
         mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapt(this));
-        CameraUpdate zoom=CameraUpdateFactory.zoomTo(11);
+        CameraUpdate zoom=CameraUpdateFactory.zoomTo(13);
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(45.756,21.229);
+        LatLng sydney = new LatLng(45.755,21.229);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         mMap.animateCamera(zoom);
