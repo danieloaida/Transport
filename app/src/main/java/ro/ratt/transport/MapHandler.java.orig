@@ -40,8 +40,13 @@ public class MapHandler {
 
     public void addLineStations(String line, String route){
         List<Station> stations = new ArrayList<Station>();
+<<<<<<< HEAD
         stations.addAll(dbHandler.getListOfStations(line, route));
+=======
+        stations.addAll(dbHandler.getListOfStations(line));
+        Polyline route;
         int lastItem = 0;
+>>>>>>> map
         PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
         Station preStation = null;
         for(Station sItem : stations){
@@ -59,8 +64,11 @@ public class MapHandler {
             preStation = sItem;
         }
 
+<<<<<<< HEAD
+=======
         lastItem--;
        // findDirections(stations.get(1).getLat(), stations.get(1).getLng(),stations.get(10).getLat(),stations.get(10).getLng(),"driving");
+>>>>>>> map
 
     }
 
