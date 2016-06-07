@@ -52,7 +52,7 @@ public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Objec
                 if (exception == null)
                 {
                     ArrayList<LatLng> directionPoints = result;
-                    PolylineOptions rectLine = new PolylineOptions().width(5).color(Color.RED);
+                    PolylineOptions rectLine = new PolylineOptions().width(6).color(Color.RED);
 
                     for(int i = 0 ; i < directionPoints.size() ; i++)
                     {

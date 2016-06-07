@@ -35,7 +35,7 @@ public class MarkerInfoWindowAdapt implements GoogleMap.InfoWindowAdapter {
 
 
        // String stringUrl = "http://ratt.ro/txt/afis_msg.php?id_traseu="+Snippet[0]+"&id_statie="+Snippet[1];
-        String stringUrl = "http://ratt.ro/txt/afis_msg.php?id_traseu="+Snippet[1]+"&id_statie="+Snippet[0];
+        String stringUrl = "http://86.122.170.105:61978/html/timpi/sens0.php?param1="+Snippet[1];
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {

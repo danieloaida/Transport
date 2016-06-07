@@ -41,27 +41,34 @@ public class MapHandler {
 
     public void addLineStations(String line, String route){
         List<Station> stations = new ArrayList<Station>();
-        stations.addAll(dbHandler.getListOfStations(line, route));
         int lastItem = 0;
-        PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
+
+        stations.addAll(dbHandler.getListOfStations(line, route));
         Station preStation = null;
+
         for(Station sItem : stations){
             MarkerOptions mark = new MarkerOptions();
             LatLng coord = new LatLng(sItem.getLat(), sItem.getLng());
-            options.add(coord);
+            // marker informations
             mark.position(coord);
             mark.title(sItem.getName());
             mark.snippet(String.valueOf(sItem.getId_st() + "," + sItem.getId_line()));
+
+            // Adding marker to map
             Marker marker = mMap.addMarker(mark);
+            // Adding marker to the global list markers
             addStation(marker, line);
+
+            //draw line between stations
             if (lastItem > 1){
-            findDirections(preStation.getLat(), preStation.getLng(),sItem.getLat(),sItem.getLng(),"driving");}
+            findDirections(preStation.getLat(), preStation.getLng(),sItem.getLat(),sItem.getLng(),"walking");}
             lastItem++;
             preStation = sItem;
         }
 
-        lastItem--;
-       // findDirections(stations.get(1).getLat(), stations.get(1).getLng(),stations.get(10).getLat(),stations.get(10).getLng(),"driving");
+        // try receiving times for stations
+
+
 
     }
 
@@ -123,14 +130,19 @@ public class MapHandler {
 
 class MapStation {
     Marker marker;
+    PolylineOptions line;
     String lineName;
     int lineID;
+    String stationTime;
 
-    public MapStation(Marker marker, String lineName, int lineID) {
+    public MapStation(Marker marker, PolylineOptions line, String lineName, int lineID, String stationTime) {
         this.marker = marker;
+        this.line = line;
         this.lineName = lineName;
         this.lineID = lineID;
+        this.stationTime = stationTime;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -152,6 +164,22 @@ class MapStation {
         this.marker = marker;
         this.lineName = lineName;
         this.lineID = -1;
+    }
+
+    public PolylineOptions getLine() {
+        return line;
+    }
+
+    public void setLine(PolylineOptions line) {
+        this.line = line;
+    }
+
+    public String getStationTime() {
+        return stationTime;
+    }
+
+    public void setStationTime(String stationTime) {
+        this.stationTime = stationTime;
     }
 
     public Marker getMarker() {

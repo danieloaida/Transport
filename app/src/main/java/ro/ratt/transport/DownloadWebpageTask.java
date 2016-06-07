@@ -12,6 +12,8 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by baby on 5/26/2016.
@@ -114,5 +116,44 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         returnValue = _name + " " + _value + "\n";
         return returnValue;
     }
+
+    public List<String> GetAllTimesList(String input) {
+
+
+        List<String> returnValue = new ArrayList<String>();
+
+
+        String tableHeader = "<td align=center width=\"60\"><b>Sosire\n";
+        String stationHeader = "<td align=left width=\"200\"><b>";
+        String valueEnd = "</b>";
+        String timeHeader = "<td align=right width=\"60\"><b>";
+        String eofString = "</ul>";
+
+        int _index = 0;
+        int endIndex = 0;
+        int route1Table = input.indexOf(tableHeader, 0);
+        int route2Table = input.indexOf(tableHeader, route1Table);
+        int endFile = input.indexOf(eofString, route2Table);
+        // init cursor
+        _index = route1Table;
+
+        while (_index > endIndex){
+
+
+        }
+
+
+/*
+        _index = input.indexOf(_nameBegin, _index);
+        _endOfName = input.indexOf(_nameEnd, _index);
+        _name = input.substring(_index + _nameBegin.length(), _endOfName);
+
+        _index = input.indexOf(_entrySpliter, _index);
+        _endOfValue = input.indexOf("<br>", _index);
+        _value = input.substring(_index + _entrySpliter.length(), _endOfValue);
+        //returnValue = _name + " " + _value + "\n";*/
+        return returnValue;
+    }
+
 
 }
