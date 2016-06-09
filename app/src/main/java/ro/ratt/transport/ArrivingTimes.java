@@ -4,9 +4,9 @@ package ro.ratt.transport;
  * Created by baby on 6/9/2016.
  */
 public class ArrivingTimes {
-    String stationName;
-    String time;
-    String route;
+    private String stationName;
+    private String time;
+    private String route;
 
     public ArrivingTimes(String stationName, String time, String route) {
         this.stationName = stationName;

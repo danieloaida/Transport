@@ -133,7 +133,7 @@ public class DBHandler extends SQLiteOpenHelper {
         double lng;
         int id_st;
         int id_line;
-        query = "SELECT " + COLUMN_friendlyStationName + ", "+ COLUMN_lat + ", " + COLUMN_lng + ", " + COLUMN_stationID + ", " + COLUMN_lineID  + " FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " = '" + line + "' AND " + COLUMN_route + " = '" + route + "' AND "+ COLUMN_invalid + " != 'TRUE';";
+        query = "SELECT " + COLUMN_lineName + ", "+ COLUMN_lat + ", " + COLUMN_lng + ", " + COLUMN_stationID + ", " + COLUMN_lineID  + " FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " = '" + line + "' AND " + COLUMN_route + " = '" + route + "' AND "+ COLUMN_invalid + " != 'TRUE';";
 
         //Cursor point to a location in results
         Cursor c = db.rawQuery(query, null);
@@ -142,7 +142,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         while (!c.isAfterLast()){
 
-            name = c.getString(c.getColumnIndex(COLUMN_friendlyStationName));
+            name = c.getString(c.getColumnIndex(COLUMN_lineName));
             String s = c.getString(c.getColumnIndex(COLUMN_lat));
             lat = Double.parseDouble(s);
             s = c.getString(c.getColumnIndex(COLUMN_lng));

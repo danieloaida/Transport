@@ -26,7 +26,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class GMapV2Direction{
     public final static String MODE_DRIVING = "driving";
     public final static String MODE_WALKING = "walking";
-    int len = 10000;
+    private int len = 10000;
 
     public GMapV2Direction() { }
 

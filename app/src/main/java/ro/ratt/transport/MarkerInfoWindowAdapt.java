@@ -1,8 +1,6 @@
 package ro.ratt.transport;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -32,7 +30,7 @@ public class MarkerInfoWindowAdapt implements GoogleMap.InfoWindowAdapter {
         TextView tvSnippet = ((TextView)myContentsView.findViewById(R.id.snippet));
         String[] Snippet = marker.getSnippet().split(",");
 
-
+        /*
 
         String stringUrl = "http://ratt.ro/txt/afis_msg.php?id_traseu="+Snippet[1]+"&id_statie="+Snippet[2];
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -42,6 +40,7 @@ public class MarkerInfoWindowAdapt implements GoogleMap.InfoWindowAdapter {
         } else {
             tvSnippet.setText("No network connection available.");
         }
+        */
 
         return myContentsView;
     }

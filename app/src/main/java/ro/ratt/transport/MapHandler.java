@@ -80,7 +80,7 @@ public class MapHandler {
             }
 
 
-            MapStation item = new MapStation(sItem.getName(),sItem.getId_st(), line, sItem.getId_line());
+            MapStation item = new MapStation(sItem.getName(),sItem.getId_st(), line, sItem.getId_line(), route);
             mapStationList.add(item);
 
             //draw line between stations
@@ -96,7 +96,7 @@ public class MapHandler {
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-            new DownloadWebpageTask(2, mapStationList).execute(stringUrl);
+            new DownloadWebpageTask(2, mapStationList, line, route).execute(stringUrl);
         } else {
         }
 
@@ -181,20 +181,22 @@ public class MapHandler {
 }
 
 class MapStation {
-    String stationName;
-    int stationID;
-    String lineName;
-    int lineID;
-    PolylineOptions line;
-    String jonctionTime;
+    private String stationName;
+    private int stationID;
+    private String lineName;
+    private int lineID;
+    private PolylineOptions line;
+    private String jonctionTime;
+    private String route;
 
-    public MapStation(String stationName, int stationID, String lineName, int lineID) {
+    public MapStation(String stationName, int stationID, String lineName, int lineID, String route) {
         this.stationName = stationName;
         this.stationID = stationID;
         this.lineName = lineName;
         this.lineID = lineID;
         this.line = null;
         this.jonctionTime = " xx : xx";
+        this.route = route;
     }
 
     public MapStation(String line){
@@ -204,6 +206,7 @@ class MapStation {
         this.lineID = 0;
         this.line = null;
         this.jonctionTime = " xx : xx";
+        this.route = "";
     }
     @Override
     public boolean equals(Object o) {
@@ -221,6 +224,13 @@ class MapStation {
         return lineName.hashCode();
     }
 
+    public String getRoute() {
+        return route;
+    }
+
+    public void setRoute(String route) {
+        this.route = route;
+    }
 
     public String getStationName() {
         return stationName;

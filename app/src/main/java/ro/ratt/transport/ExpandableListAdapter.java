@@ -57,7 +57,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         CheckedTextView txtListChild = (CheckedTextView) convertView
                 .findViewById(R.id.ctvItem);
-        if (mapStationList.contains(new MapStation(null, childText))){
+        if (mapStationList.contains(new MapStation(childText))){
             txtListChild.setBackgroundColor(Color.CYAN);
         } else{
             txtListChild.setBackgroundColor(Color.WHITE);

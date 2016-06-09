@@ -5,6 +5,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.Marker;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,8 +24,16 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
     private TextView textView;
     private Marker markerShowingInfoWindow;
     private int option = 0;
+    private String route;
+    private String lineName;
     private List<MapStation> mapStationList = new ArrayList<MapStation>();
 
+    public DownloadWebpageTask(int opt, List<MapStation> mapStationList, String lineName, String route) {
+        this.option = opt;
+        this.mapStationList = mapStationList;
+        this.lineName = lineName;
+        this.route = route;
+    }
 
     public DownloadWebpageTask(int opt, TextView textView, Marker markerShowingInfoWindow) {
         this.textView = textView;
@@ -31,10 +41,7 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         this.option = opt;
     }
 
-    public DownloadWebpageTask(int opt, List<MapStation> mapStationList) {
-        this.option = opt;
-        this.mapStationList = mapStationList;
-    }
+
 
     @Override
     protected String doInBackground(String... urls) {
@@ -50,22 +57,22 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
     // onPostExecute displays the results of the AsyncTask.
     @Override
     protected void onPostExecute(String result) {
-        List<ArrivingTimes> converted;
 
         switch (option){
             case 1:
                 stationTime(result);
                 break;
             case 2:
-                converted = GetAllTimesList(result);
+                lineTimes(result);
                 break;
             default:
-                converted = GetAllTimesList(result);
+                lineTimes(result);
                 break;
 
         }
 
     }
+
 
     private void stationTime(String result){
 
@@ -78,8 +85,33 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
     }
 
     private void lineTimes(String result)    {
+        List<ArrivingTimes> converted;
+        converted = GetAllTimesList(result);
+        int i = 0;
+        for(MapStation item : mapStationList){
+            if (item.getLineName().equals(lineName) && item.getRoute().equals(route)){
+                break;
+            }
+            i++;
+        }
+
+        for(ArrivingTimes item: converted){
+            int found = searchInMapList(i, item.getStationName(), 25);
+            mapStationList.get(found).setJonctionTime(item.getTime());
 
 
+        }
+    }
+
+    private int searchInMapList(int start, String stationName, int end){
+        int i = start;
+        end = end + start;
+        while((i < end) && !mapStationList.get(i).getStationName().equals(stationName) && mapStationList.get(i).getLineName().equals(lineName)){
+            i++;
+        }
+        if (i == end) return -1;
+        else
+        return i;
     }
        // Given a URL, establishes an HttpUrlConnection and retrieves
 // the web page content as a InputStream, which it returns as
@@ -93,18 +125,18 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         try {
             URL url = new URL(myurl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000 /* milliseconds */);
-            conn.setConnectTimeout(15000 /* milliseconds */);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
+           // conn.setReadTimeout(30000 /* milliseconds */);
+            //conn.setConnectTimeout(60000 /* milliseconds */);
+           // conn.setRequestMethod("GET");
+           // conn.setDoInput(true);
             // Starts the query
-            conn.connect();
-            int response = conn.getResponseCode();
+            //conn.connect();
+            //int response = conn.getResponseCode();
 
-            is = conn.getInputStream();
+            is = new BufferedInputStream(conn.getInputStream());
 
             // Convert the InputStream into a string
-            String contentAsString = readIt(is, len);
+            String contentAsString = readStream(is);
 
             return contentAsString;
 
@@ -117,12 +149,24 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         }
     }
 
+
+    private String readStream(InputStream is) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        BufferedReader r = new BufferedReader(new InputStreamReader(is),1000);
+        for (String line = r.readLine(); line != null; line =r.readLine()){
+            sb.append(line);
+        }
+        is.close();
+        return sb.toString();
+    }
     // Reads an InputStream and converts it to a String.
     public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
         Reader reader = null;
         reader = new InputStreamReader(stream, "UTF-8");
         char[] buffer = new char[len];
-        reader.read(buffer);
+        int counter= 10000;
+        reader.read(buffer,0,counter);
+
         return new String(buffer);
     }
 
@@ -168,13 +212,13 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         int endCut = 0;
         int endIndex = 0;
         int route1Table = input.indexOf(tableHeader, 0);
-        int route2Table = input.indexOf(tableHeader, route1Table);
+        int route2Table = input.indexOf(tableHeader, route1Table+1);
         int endFile = input.indexOf(eofString, route2Table);
         // init cursor
         index = route1Table;
-        endIndex = endFile;
+        endIndex = route2Table;
 
-        while (index > endIndex){
+        while (index < endIndex){
             index = input.indexOf(stationHeader, index);
             startCut = index + stationHeader.length();
             endCut = input.indexOf(valueEnd, startCut);
@@ -187,11 +231,13 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
             String time = input.substring(startCut, endCut);
             ArrivingTimes item = new ArrivingTimes(sName, time, "route1");
             returnValue.add(item);
+
+            index = input.indexOf("<table", index);
+
 
         }
 
-        endIndex = endFile;
-        while (index > endIndex){
+        while (index != -1){
             index = input.indexOf(stationHeader, index);
             startCut = index + stationHeader.length();
             endCut = input.indexOf(valueEnd, startCut);
@@ -202,8 +248,10 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
             startCut = index + timeHeader.length();
             endCut = input.indexOf(valueEnd, startCut);
             String time = input.substring(startCut, endCut);
-            ArrivingTimes item = new ArrivingTimes(sName, time, "route1");
+            ArrivingTimes item = new ArrivingTimes(sName, time, "route2");
             returnValue.add(item);
+
+            index = input.indexOf("<table", index);
 
         }
 

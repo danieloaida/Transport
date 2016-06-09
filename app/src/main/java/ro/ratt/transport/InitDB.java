@@ -16,8 +16,8 @@ import java.util.List;
  * Created by baby on 4/22/2016.
  */
 public class InitDB {
-    Context context;
-    DBHandler dbHandler;
+    private Context context;
+    private DBHandler dbHandler;
 
 
     public InitDB(Context context, DBHandler dbHandler) {
