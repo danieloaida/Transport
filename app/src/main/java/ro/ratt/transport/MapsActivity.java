@@ -16,6 +16,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -35,6 +36,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listDataChild;
     private List<MapStation> mapStationList;
+    private List<Marker> lstMarkers;
     private List<LineInfo> lstLineAvl;
 
 
@@ -49,6 +51,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mapStationList = new ArrayList<MapStation>();
         lstLineAvl = new ArrayList<LineInfo>();
+        lstMarkers = new ArrayList<Marker>();
+
         dbHandler = new DBHandler(this, null, null, 1);
         initDB = new InitDB(this, dbHandler);
 

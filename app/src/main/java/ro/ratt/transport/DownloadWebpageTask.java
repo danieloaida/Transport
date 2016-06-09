@@ -2,7 +2,6 @@ package ro.ratt.transport;
 
 import android.os.AsyncTask;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.Marker;
 
@@ -20,9 +19,10 @@ import java.util.List;
  * Created by baby on 5/26/2016.
  */
 public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
-    TextView textView;
-    Marker markerShowingInfoWindow;
-    int option = 0;
+    private TextView textView;
+    private Marker markerShowingInfoWindow;
+    private int option = 0;
+    private List<MapStation> mapStationList = new ArrayList<MapStation>();
 
 
     public DownloadWebpageTask(int opt, TextView textView, Marker markerShowingInfoWindow) {
@@ -31,11 +31,13 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         this.option = opt;
     }
 
-    public DownloadWebpageTask(int opt ) {
+    public DownloadWebpageTask(int opt, List<MapStation> mapStationList) {
         this.option = opt;
+        this.mapStationList = mapStationList;
     }
+
     @Override
-    protected List<ArrivingTimes> doInBackground(String... urls) {
+    protected String doInBackground(String... urls) {
 
         // params comes from the execute() call: params[0] is the url.
         try {
@@ -48,18 +50,41 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
     // onPostExecute displays the results of the AsyncTask.
     @Override
     protected void onPostExecute(String result) {
+        List<ArrivingTimes> converted;
+
+        switch (option){
+            case 1:
+                stationTime(result);
+                break;
+            case 2:
+                converted = GetAllTimesList(result);
+                break;
+            default:
+                converted = GetAllTimesList(result);
+                break;
+
+        }
+
+    }
+
+    private void stationTime(String result){
 
         textView.setText(result);
 
         if (markerShowingInfoWindow != null && markerShowingInfoWindow.isInfoWindowShown()) {
             markerShowingInfoWindow.showInfoWindow();
         }
+
     }
 
-    // Given a URL, establishes an HttpUrlConnection and retrieves
+    private void lineTimes(String result)    {
+
+
+    }
+       // Given a URL, establishes an HttpUrlConnection and retrieves
 // the web page content as a InputStream, which it returns as
 // a string.
-    private List<ArrivingTimes> downloadUrl(String myurl) throws IOException {
+    private String downloadUrl(String myurl) throws IOException {
         InputStream is = null;
         // Only display the first 500 characters of the retrieved
         // web page content.
@@ -80,21 +105,8 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
 
             // Convert the InputStream into a string
             String contentAsString = readIt(is, len);
-            List<ArrivingTimes> converted;
 
-            switch (option){
-                case 1:
-                    converted = GetListValues(contentAsString);
-                    break;
-                case 2:
-                    converted = GetAllTimesList(contentAsString);
-                    break;
-                default:
-                    converted = GetAllTimesList(contentAsString);
-                    break;
-
-            }
-            return converted;
+            return contentAsString;
 
             // Makes sure that the InputStream is closed after the app is
             // finished using it.

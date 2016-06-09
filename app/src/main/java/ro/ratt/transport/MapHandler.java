@@ -23,6 +23,7 @@ import java.util.Map;
  */
 public class MapHandler {
     private List<MapStation> mapStationList = new ArrayList<MapStation>();
+    private List<Marker> lstMarkers = new ArrayList<Marker>();
     private GoogleMap mMap;
     private DBHandler dbHandler;
     private Context context;
@@ -34,32 +35,53 @@ public class MapHandler {
         this.context = context;
     }
 
-    public void addStation(Marker marker, String lineName){
-        MapStation mapStation;
-        mapStation = new MapStation(marker, lineName);
-        mapStationList.add(mapStation);
-
+    private Marker search(String station){
+        for (Iterator<Marker> iter = lstMarkers.listIterator(); iter.hasNext();){
+            Marker mItem = iter.next();
+            if (mItem.getSnippet().contains(station)){
+                return mItem;
+            }
+        }
+        return null;
     }
+
 
     public void addLineStations(String line, String route){
         List<Station> stations = new ArrayList<Station>();
         int lastItem = 0;
 
         stations.addAll(dbHandler.getListOfStations(line, route));
-        Station preStation = null;
+        Station preStation = stations.get(0);
+        int line_id = preStation.getId_line();
+
+
 
         for(Station sItem : stations){
-            MarkerOptions mark = new MarkerOptions();
-            LatLng coord = new LatLng(sItem.getLat(), sItem.getLng());
-            // marker informations
-            mark.position(coord);
-            mark.title(sItem.getName());
-            mark.snippet(String.valueOf(sItem.getId_st() + "," + sItem.getId_line()));
+            String stationID = String.valueOf(sItem.getId_st());
+            Marker found = search(stationID);
+            if (found == null) {
+                MarkerOptions mark = new MarkerOptions();
+                LatLng coord = new LatLng(sItem.getLat(), sItem.getLng());
+                // marker informations
+                mark.position(coord);
+                mark.title(sItem.getName());
+                mark.snippet(String.valueOf(1 + "," + sItem.getId_st() + "," + sItem.getId_line()));
 
-            // Adding marker to map
-            Marker marker = mMap.addMarker(mark);
-            // Adding marker to the global list markers
-            addStation(marker, line);
+                // Adding marker to map
+                Marker marker = mMap.addMarker(mark);
+                // Adding marker to the global list markers
+                lstMarkers.add(marker);
+            } else {
+                String markerSnippet = found.getSnippet().concat(","+stationID);
+                int lineNo = Integer.parseInt(markerSnippet.substring(0,1));
+                lineNo++;
+                found.setSnippet(lineNo + markerSnippet.substring(1));
+
+            }
+
+
+            MapStation item = new MapStation(sItem.getName(),sItem.getId_st(), line, sItem.getId_line());
+            mapStationList.add(item);
 
             //draw line between stations
             if (lastItem > 1){
@@ -70,14 +92,14 @@ public class MapHandler {
 
         // try receiving times for stations
 
-        String stringUrl = "http://86.122.170.105:61978/html/timpi/sens0.php?param1="+Snippet[1];
+        String stringUrl = "http://86.122.170.105:61978/html/timpi/sens0.php?param1="+line_id;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-            new DownloadWebpageTask(2).execute(stringUrl);
+            new DownloadWebpageTask(2, mapStationList).execute(stringUrl);
         } else {
-            tvSnippet.setText("No network connection available.");
         }
+
 
 
 
@@ -87,12 +109,31 @@ public class MapHandler {
 
         for (Iterator<MapStation> iter = mapStationList.listIterator(); iter.hasNext();){
             MapStation mItem = iter.next();
-            if (mapStationList.contains(new MapStation(null, line))){
-                mItem.marker.remove();
+            if (mItem.equals(new MapStation(line))){
                 iter.remove();
             }
 
         }
+        for (Iterator<Marker> iter = lstMarkers.listIterator(); iter.hasNext();){
+            Marker mItem = iter.next();
+            String[] Snippet = mItem.getSnippet().split(",");
+            int lineNo = Integer.parseInt(Snippet[0]);
+            if (lineNo == 1){
+                mItem.remove();
+                iter.remove();
+            } else {
+                String reMerge = "";
+                for(String lineItem: Snippet)
+                if (lineItem.equals(line)) {
+                    lineNo--;
+                }else {
+                    reMerge.concat(lineItem + ",");
+                }
+                reMerge = lineNo + reMerge.substring(1);
+                mItem.setSnippet(reMerge);
+            }
+        }
+
 
     }
 
@@ -140,21 +181,30 @@ public class MapHandler {
 }
 
 class MapStation {
-    Marker marker;
-    PolylineOptions line;
+    String stationName;
+    int stationID;
     String lineName;
     int lineID;
-    String stationTime;
+    PolylineOptions line;
+    String jonctionTime;
 
-    public MapStation(Marker marker, PolylineOptions line, String lineName, int lineID, String stationTime) {
-        this.marker = marker;
-        this.line = line;
+    public MapStation(String stationName, int stationID, String lineName, int lineID) {
+        this.stationName = stationName;
+        this.stationID = stationID;
         this.lineName = lineName;
         this.lineID = lineID;
-        this.stationTime = stationTime;
+        this.line = null;
+        this.jonctionTime = " xx : xx";
     }
 
-
+    public MapStation(String line){
+        this.stationName = null;
+        this.stationID = 0;
+        this.lineName = line;
+        this.lineID = 0;
+        this.line = null;
+        this.jonctionTime = " xx : xx";
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -171,34 +221,38 @@ class MapStation {
         return lineName.hashCode();
     }
 
-    public MapStation(Marker marker, String lineName) {
-        this.marker = marker;
-        this.lineName = lineName;
-        this.lineID = -1;
+
+    public String getStationName() {
+        return stationName;
+    }
+
+    public void setStationName(String stationName) {
+        this.stationName = stationName;
+    }
+
+    public int getStationID() {
+        return stationID;
+    }
+
+    public void setStationID(int stationID) {
+        this.stationID = stationID;
+    }
+
+    public String getJonctionTime() {
+        return jonctionTime;
+    }
+
+    public void setJonctionTime(String jonctionTime) {
+        this.jonctionTime = jonctionTime;
     }
 
     public PolylineOptions getLine() {
         return line;
     }
 
+
     public void setLine(PolylineOptions line) {
         this.line = line;
-    }
-
-    public String getStationTime() {
-        return stationTime;
-    }
-
-    public void setStationTime(String stationTime) {
-        this.stationTime = stationTime;
-    }
-
-    public Marker getMarker() {
-        return marker;
-    }
-
-    public void setMarker(Marker marker) {
-        this.marker = marker;
     }
 
     public String getLineName() {
