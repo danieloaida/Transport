@@ -2,6 +2,7 @@ package ro.ratt.transport;
 
 import android.os.AsyncTask;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.Marker;
 
@@ -21,21 +22,26 @@ import java.util.List;
 public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
     TextView textView;
     Marker markerShowingInfoWindow;
+    int option = 0;
 
 
-    public DownloadWebpageTask(TextView textView, Marker markerShowingInfoWindow) {
+    public DownloadWebpageTask(int opt, TextView textView, Marker markerShowingInfoWindow) {
         this.textView = textView;
         this.markerShowingInfoWindow = markerShowingInfoWindow;
+        this.option = opt;
     }
 
+    public DownloadWebpageTask(int opt ) {
+        this.option = opt;
+    }
     @Override
-    protected String doInBackground(String... urls) {
+    protected List<ArrivingTimes> doInBackground(String... urls) {
 
         // params comes from the execute() call: params[0] is the url.
         try {
             return downloadUrl(urls[0]);
         } catch (IOException e) {
-            return "Unable to retrieve web page. URL may be invalid.";
+            return null;
         }
     }
 
@@ -53,7 +59,7 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
     // Given a URL, establishes an HttpUrlConnection and retrieves
 // the web page content as a InputStream, which it returns as
 // a string.
-    private String downloadUrl(String myurl) throws IOException {
+    private List<ArrivingTimes> downloadUrl(String myurl) throws IOException {
         InputStream is = null;
         // Only display the first 500 characters of the retrieved
         // web page content.
@@ -74,7 +80,20 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
 
             // Convert the InputStream into a string
             String contentAsString = readIt(is, len);
-            String converted = GetListValues(contentAsString);
+            List<ArrivingTimes> converted;
+
+            switch (option){
+                case 1:
+                    converted = GetListValues(contentAsString);
+                    break;
+                case 2:
+                    converted = GetAllTimesList(contentAsString);
+                    break;
+                default:
+                    converted = GetAllTimesList(contentAsString);
+                    break;
+
+            }
             return converted;
 
             // Makes sure that the InputStream is closed after the app is
@@ -95,13 +114,14 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         return new String(buffer);
     }
 
-    public String GetListValues(String input) {
+    public List<ArrivingTimes> GetListValues(String input) {
+
+        List<ArrivingTimes> returnValue = new ArrayList<ArrivingTimes>();
 
         int _index = 0;
         int _endOfValue = 0;
         int _endOfName = 0;
         String _value = "";
-        String returnValue = "";
         String _name = "";
         String _entrySpliter = "Sosire1:";
         String _nameBegin = "Linia: </font>";
@@ -113,45 +133,68 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         _index = input.indexOf(_entrySpliter, _index);
         _endOfValue = input.indexOf("<br>", _index);
         _value = input.substring(_index + _entrySpliter.length(), _endOfValue);
-        returnValue = _name + " " + _value + "\n";
+
+        ArrivingTimes item = new ArrivingTimes(_name,_value,"");
+        returnValue.add(item);
         return returnValue;
     }
 
-    public List<String> GetAllTimesList(String input) {
+    public List<ArrivingTimes> GetAllTimesList(String input) {
 
 
-        List<String> returnValue = new ArrayList<String>();
+        List<ArrivingTimes> returnValue = new ArrayList<ArrivingTimes>();
 
 
-        String tableHeader = "<td align=center width=\"60\"><b>Sosire\n";
+        String tableHeader = "<td align=center width=\"60\"><b>Sosire";
         String stationHeader = "<td align=left width=\"200\"><b>";
         String valueEnd = "</b>";
         String timeHeader = "<td align=right width=\"60\"><b>";
         String eofString = "</ul>";
 
-        int _index = 0;
+        int index = 0;
+        int startCut = 0;
+        int endCut = 0;
         int endIndex = 0;
         int route1Table = input.indexOf(tableHeader, 0);
         int route2Table = input.indexOf(tableHeader, route1Table);
         int endFile = input.indexOf(eofString, route2Table);
         // init cursor
-        _index = route1Table;
+        index = route1Table;
+        endIndex = endFile;
 
-        while (_index > endIndex){
+        while (index > endIndex){
+            index = input.indexOf(stationHeader, index);
+            startCut = index + stationHeader.length();
+            endCut = input.indexOf(valueEnd, startCut);
+            String sName = input.substring(startCut, endCut);
+            index = endCut;
 
+            index = input.indexOf(timeHeader, index);
+            startCut = index + timeHeader.length();
+            endCut = input.indexOf(valueEnd, startCut);
+            String time = input.substring(startCut, endCut);
+            ArrivingTimes item = new ArrivingTimes(sName, time, "route1");
+            returnValue.add(item);
 
         }
 
+        endIndex = endFile;
+        while (index > endIndex){
+            index = input.indexOf(stationHeader, index);
+            startCut = index + stationHeader.length();
+            endCut = input.indexOf(valueEnd, startCut);
+            String sName = input.substring(startCut, endCut);
+            index = endCut;
 
-/*
-        _index = input.indexOf(_nameBegin, _index);
-        _endOfName = input.indexOf(_nameEnd, _index);
-        _name = input.substring(_index + _nameBegin.length(), _endOfName);
+            index = input.indexOf(timeHeader, index);
+            startCut = index + timeHeader.length();
+            endCut = input.indexOf(valueEnd, startCut);
+            String time = input.substring(startCut, endCut);
+            ArrivingTimes item = new ArrivingTimes(sName, time, "route1");
+            returnValue.add(item);
 
-        _index = input.indexOf(_entrySpliter, _index);
-        _endOfValue = input.indexOf("<br>", _index);
-        _value = input.substring(_index + _entrySpliter.length(), _endOfValue);
-        //returnValue = _name + " " + _value + "\n";*/
+        }
+
         return returnValue;
     }
 

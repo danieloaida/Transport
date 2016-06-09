@@ -2,6 +2,8 @@ package ro.ratt.transport;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -67,6 +69,15 @@ public class MapHandler {
         }
 
         // try receiving times for stations
+
+        String stringUrl = "http://86.122.170.105:61978/html/timpi/sens0.php?param1="+Snippet[1];
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            new DownloadWebpageTask(2).execute(stringUrl);
+        } else {
+            tvSnippet.setText("No network connection available.");
+        }
 
 
 
