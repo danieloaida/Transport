@@ -205,7 +205,7 @@ class MapStation {
         this.lineName = line;
         this.lineID = 0;
         this.line = null;
-        this.jonctionTime = " xx : xx";
+        this.jonctionTime = "xx : xx";
         this.route = "";
     }
     @Override

@@ -35,7 +35,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listDataChild;
-    private List<MapStation> mapStationList;
+    public List<MapStation> mapStationList;
     private List<Marker> lstMarkers;
     private List<LineInfo> lstLineAvl;
 
@@ -243,6 +243,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
-
-
+    public List<MapStation> getMapStationList() {
+        return mapStationList;
+    }
 }

@@ -87,25 +87,26 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
     private void lineTimes(String result)    {
         List<ArrivingTimes> converted;
         converted = GetAllTimesList(result);
-        int i = 0;
+        int i = 0;        int k = 0;
+
         for(MapStation item : mapStationList){
             if (item.getLineName().equals(lineName) && item.getRoute().equals(route)){
-                break;
-            }
-            i++;
+               break;
+            } else i++;
         }
 
         for(ArrivingTimes item: converted){
             int found = searchInMapList(i, item.getStationName(), 25);
-            mapStationList.get(found).setJonctionTime(item.getTime());
-
+            if (found != -1) {
+                mapStationList.get(found).setJonctionTime(item.getTime());
+            }
 
         }
     }
 
     private int searchInMapList(int start, String stationName, int end){
         int i = start;
-        end = end + start;
+        end = mapStationList.size();
         while((i < end) && !mapStationList.get(i).getStationName().equals(stationName) && mapStationList.get(i).getLineName().equals(lineName)){
             i++;
         }
