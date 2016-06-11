@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckedTextView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -99,8 +100,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = infalInflater.inflate(R.layout.list_group, null);
         }
 
-        TextView lblListHeader = (TextView) convertView
-                .findViewById(R.id.lblListHeader);
+        TextView lblListHeader = (TextView) convertView.findViewById(R.id.lblListHeader);
+        ImageView imgListHeader = (ImageView) convertView.findViewById(R.id.imgListHeader);
+        switch (headerTitle){
+            case "Tramvai":
+                imgListHeader.setImageResource(R.drawable.tram);
+                break;
+            default:
+                imgListHeader.setImageResource(R.drawable.bus);
+                break;
+
+        }
         lblListHeader.setTypeface(null, Typeface.BOLD);
         lblListHeader.setText(headerTitle);
 

@@ -6,7 +6,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -36,8 +38,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listDataChild;
     public List<MapStation> mapStationList;
-    private List<Marker> lstMarkers;
+    private List<Marker> lstTransports;
     private List<LineInfo> lstLineAvl;
+    TimeReceiver timeReceiver;
 
 
     @Override
@@ -51,7 +54,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mapStationList = new ArrayList<MapStation>();
         lstLineAvl = new ArrayList<LineInfo>();
-        lstMarkers = new ArrayList<Marker>();
+        lstTransports = new ArrayList<Marker>();
+        this.timeReceiver = new TimeReceiver(this, mapStationList);
 
         dbHandler = new DBHandler(this, null, null, 1);
         initDB = new InitDB(this, dbHandler);
@@ -60,9 +64,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ExpandableListView) findViewById(R.id.left_drawer);
-        // Set the adapter for the list view
-       // mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-              //  R.layout.drawer_list_item, mPlanetTitles));
 
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
@@ -77,9 +78,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                                         int groupPosition, long id) {
-                // Toast.makeText(getApplicationContext(),
-                // "Group Clicked " + listDataHeader.get(groupPosition),
-                // Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -129,12 +127,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 if (lstLineAvl.contains(new LineInfo(LineName, "route1"))){
                     mapHandler.removeLineStations(LineName);
+                    int location = lstLineAvl.indexOf(new LineInfo(LineName, "route1"));
+                    removeBtn(location);
                     mapHandler.addLineStations(LineName, "route2");
                     lstLineAvl.remove(new LineInfo(LineName, "route1"));
-                            lstLineAvl.add(new LineInfo(LineName, "route2"));
+                    lstLineAvl.add(new LineInfo(LineName, "route2"));
+                    addBtn(LineName);
                     v.setBackgroundColor(Color.GREEN);
                 } else {
                     if (lstLineAvl.contains(new LineInfo(LineName, "route2"))) {
+                        int location = lstLineAvl.indexOf(new LineInfo(LineName, "route2"));
+                        removeBtn(location);
                         mapHandler.removeLineStations(LineName);
                         lstLineAvl.remove(new LineInfo(LineName, "route2"));
                         v.setBackgroundColor(Color.WHITE);
@@ -142,15 +145,53 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         mapHandler.addLineStations(LineName, "route1");
                         lstLineAvl.add(new LineInfo(LineName, "route1"));
                         v.setBackgroundColor(Color.CYAN);
+                        addBtn(LineName);
                     }
                 }
+
+                mDrawerLayout.closeDrawer(mDrawerList);
                 return false;
             }
         });
 
     }
 
+    private void removeBtn(int location){
 
+        LinearLayout mainLayout = (LinearLayout)findViewById(R.id.mapLayout);
+        mainLayout.removeViewAt(location);
+    }
+    private void addBtn(String name){
+
+        Button myButton = new Button(this);
+        myButton.setText(name);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(80, 80);
+        layoutParams.setMargins(5, 3, 5, 10); // left, top, right, bottom
+        myButton.setLayoutParams(layoutParams);
+        myButton.setBackgroundColor(Color.WHITE);
+        myButton.setAlpha(0.8f);
+        myButton.setOnClickListener(btnClickListener);
+
+        LinearLayout mainLayout = (LinearLayout)findViewById(R.id.mapLayout);
+        mainLayout.addView(myButton);
+    }
+
+    View.OnClickListener btnClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            Button b = (Button)v;
+            String buttonText = b.getText().toString();
+            int tmp = mapStationList.indexOf(new MapStation(buttonText));
+            int line_id = mapStationList.get(tmp).getLineID();
+            int found = lstLineAvl.indexOf(new LineInfo(buttonText, "route1"));
+            if (found != -1){
+                timeReceiver.StartDownload(line_id, buttonText, "route1");
+            }else{
+                timeReceiver.StartDownload(line_id, buttonText, "route2");}
+        }
+
+    };
     private void prepareListData() {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
@@ -218,6 +259,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 {
                     marker.showInfoWindow();
                     return true;
+                }
+            });
+            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+
+
                 }
             });
         }

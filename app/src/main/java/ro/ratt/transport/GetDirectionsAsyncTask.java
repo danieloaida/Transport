@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,12 +31,16 @@ public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Objec
         private Exception exception;
         private ProgressDialog progressDialog;
         private GoogleMap mMap;
+        private List<MapStation> mapStationList = new ArrayList<MapStation>();
+        private int pos;
 
-        public GetDirectionsAsyncTask(Context context, GoogleMap mMap)
+        public GetDirectionsAsyncTask(Context context, GoogleMap mMap, List<MapStation> mapStationList, int i)
         {
                 super();
                 this.context = context;
                 this.mMap = mMap;
+                this.mapStationList = mapStationList;
+                this.pos = i;
         }
 
         public void onPreExecute()
@@ -52,14 +57,14 @@ public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Objec
                 if (exception == null)
                 {
                     ArrayList<LatLng> directionPoints = result;
-                    PolylineOptions rectLine = new PolylineOptions().width(6).color(Color.RED);
+                    PolylineOptions rectLine = new PolylineOptions().width(10).color(Color.argb(255, 0, 175, 255));
 
                     for(int i = 0 ; i < directionPoints.size() ; i++)
                     {
                         rectLine.add(directionPoints.get(i));
                     }
 
-                    Polyline newPolyline = mMap.addPolyline(rectLine);
+                    mapStationList.get(pos).line = mMap.addPolyline(rectLine);
                 }
                 else
                 {

@@ -2,10 +2,9 @@ package ro.ratt.transport;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -27,12 +26,15 @@ public class MapHandler {
     private GoogleMap mMap;
     private DBHandler dbHandler;
     private Context context;
+    private TimeReceiver timeReceiver;
+
 
     public MapHandler(List<MapStation> mapStationList, GoogleMap mMap, DBHandler dbHandler, Context context) {
         this.mapStationList = mapStationList;
         this.mMap = mMap;
         this.dbHandler = dbHandler;
         this.context = context;
+        timeReceiver = new TimeReceiver(context, mapStationList);
     }
 
     private Marker search(String station){
@@ -66,6 +68,7 @@ public class MapHandler {
                 mark.position(coord);
                 mark.title(sItem.getName());
                 mark.snippet(String.valueOf(1 + "," + sItem.getId_st() + "," + sItem.getId_line()));
+                mark.icon(BitmapDescriptorFactory.fromResource(R.drawable.blue_bus));
 
                 // Adding marker to map
                 Marker marker = mMap.addMarker(mark);
@@ -82,23 +85,19 @@ public class MapHandler {
 
             MapStation item = new MapStation(sItem.getName(),sItem.getId_st(), line, sItem.getId_line(), route);
             mapStationList.add(item);
-
+            int pos = mapStationList.indexOf(item);
             //draw line between stations
-            if (lastItem > 1){
-            findDirections(preStation.getLat(), preStation.getLng(),sItem.getLat(),sItem.getLng(),"walking");}
+            if (lastItem > 1) {
+                findDirections(preStation.getLat(), preStation.getLng(), sItem.getLat(),sItem.getLng(),"walking", mapStationList, pos);
+
+            }
+
             lastItem++;
             preStation = sItem;
         }
 
         // try receiving times for stations
-
-        String stringUrl = "http://86.122.170.105:61978/html/timpi/sens0.php?param1="+line_id;
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            new DownloadWebpageTask(2, mapStationList, line, route).execute(stringUrl);
-        } else {
-        }
+        timeReceiver.StartDownload(line_id, line, route);
 
 
 
@@ -110,6 +109,9 @@ public class MapHandler {
         for (Iterator<MapStation> iter = mapStationList.listIterator(); iter.hasNext();){
             MapStation mItem = iter.next();
             if (mItem.equals(new MapStation(line))){
+                if (mItem.getLine() != null) {
+                    mItem.getLine().remove();
+                }
                 iter.remove();
             }
 
@@ -137,7 +139,7 @@ public class MapHandler {
 
     }
 
-    public void findDirections(double fromPositionDoubleLat, double fromPositionDoubleLong, double toPositionDoubleLat, double toPositionDoubleLong, String mode)
+    public void findDirections(double fromPositionDoubleLat, double fromPositionDoubleLong, double toPositionDoubleLat, double toPositionDoubleLong, String mode, List<MapStation> list, int pos)
     {
         Map<String, String> map = new HashMap<String, String>();
         map.put(GetDirectionsAsyncTask.USER_CURRENT_LAT, String.valueOf(fromPositionDoubleLat));
@@ -146,7 +148,7 @@ public class MapHandler {
         map.put(GetDirectionsAsyncTask.DESTINATION_LONG, String.valueOf(toPositionDoubleLong));
         map.put(GetDirectionsAsyncTask.DIRECTIONS_MODE, mode);
 
-        GetDirectionsAsyncTask asyncTask = new GetDirectionsAsyncTask(context, mMap);
+        GetDirectionsAsyncTask asyncTask = new GetDirectionsAsyncTask(context, mMap, list, pos);
         asyncTask.execute(map);
     }
 
@@ -185,7 +187,7 @@ class MapStation {
     private int stationID;
     private String lineName;
     private int lineID;
-    private PolylineOptions line;
+    public Polyline line;
     private String jonctionTime;
     private String route;
 
@@ -206,7 +208,7 @@ class MapStation {
         this.lineID = 0;
         this.line = null;
         this.jonctionTime = "xx : xx";
-        this.route = "";
+        this.route = null;
     }
     @Override
     public boolean equals(Object o) {
@@ -215,7 +217,13 @@ class MapStation {
 
         MapStation that = (MapStation) o;
 
-        return lineName.equals(that.lineName);
+        if (that.getRoute() == null) {
+            return lineName.equals(that.lineName);
+        }
+        else {
+
+            return lineName.equals(that.lineName)&&stationName.equals(that.stationName)&&route.equals(that.route);
+        }
 
     }
 
@@ -256,12 +264,12 @@ class MapStation {
         this.jonctionTime = jonctionTime;
     }
 
-    public PolylineOptions getLine() {
+    public Polyline getLine() {
         return line;
     }
 
 
-    public void setLine(PolylineOptions line) {
+    public void setLine(Polyline line) {
         this.line = line;
     }
 
