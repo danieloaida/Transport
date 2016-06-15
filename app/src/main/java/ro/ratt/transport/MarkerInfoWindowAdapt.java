@@ -24,7 +24,7 @@ public class MarkerInfoWindowAdapt implements GoogleMap.InfoWindowAdapter {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         myContentsView = inflater.inflate(R.layout.info_window, null);
         mapsActivity = (MapsActivity) context;
-        this.timeReceiver = new TimeReceiver(context, mapsActivity.getMapStationList());
+        this.timeReceiver = new TimeReceiver(context, mapsActivity.getMapStationList(), mapsActivity.getLstMarkers(), mapsActivity.getmMap());
     }
 
     private int searchInMapList(int start, int stationID, int lineID){

@@ -37,8 +37,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listDataChild;
-    public List<MapStation> mapStationList;
-    private List<Marker> lstTransports;
+    private List<MapStation> mapStationList;
+    private List<Marker> lstMarkers;
     private List<LineInfo> lstLineAvl;
     TimeReceiver timeReceiver;
 
@@ -54,8 +54,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mapStationList = new ArrayList<MapStation>();
         lstLineAvl = new ArrayList<LineInfo>();
-        lstTransports = new ArrayList<Marker>();
-        this.timeReceiver = new TimeReceiver(this, mapStationList);
+        lstMarkers = new ArrayList<Marker>();
+        this.timeReceiver = new TimeReceiver(this, mapStationList, lstMarkers, mMap);
 
         dbHandler = new DBHandler(this, null, null, 1);
         initDB = new InitDB(this, dbHandler);
@@ -293,5 +293,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public List<MapStation> getMapStationList() {
         return mapStationList;
+    }
+
+    public List<Marker> getLstMarkers() {
+        return lstMarkers;
+    }
+
+    public GoogleMap getmMap() {
+        return mMap;
     }
 }

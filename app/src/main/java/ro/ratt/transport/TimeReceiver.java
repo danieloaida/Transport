@@ -4,6 +4,10 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.Marker;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,10 +19,14 @@ public class TimeReceiver {
     private ConnectivityManager connMgr;
     private NetworkInfo networkInfo;
     private List<MapStation> mapStationList;
+    private List<Marker> lstMarkers = new ArrayList<>();
+    private GoogleMap mMap;
 
-    public TimeReceiver(Context context, List<MapStation> mapStationList) {
+    public TimeReceiver(Context context, List<MapStation> mapStationList, List<Marker> lstMarkers, GoogleMap mMap) {
         this.context = context;
         this.mapStationList = mapStationList;
+        this.lstMarkers = lstMarkers;
+        this.mMap = mMap;
     }
 
     public void StartDownload(int line_id, String line, String route){
@@ -27,7 +35,7 @@ public class TimeReceiver {
         networkInfo = connMgr.getActiveNetworkInfo();
 
         if (networkInfo != null && networkInfo.isConnected()) {
-            new DownloadWebpageTask(2, mapStationList, line, route).execute(stringUrl);
+            new DownloadWebpageTask(2, mapStationList, lstMarkers, line, route, mMap).execute(stringUrl);
         } else {
         }
     }

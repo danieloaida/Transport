@@ -3,7 +3,11 @@ package ro.ratt.transport;
 import android.os.AsyncTask;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -15,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -27,12 +32,16 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
     private String route;
     private String lineName;
     private List<MapStation> mapStationList = new ArrayList<MapStation>();
+    private List<Marker> lstMarkers = new ArrayList<Marker>();
+    private GoogleMap mMap;
 
-    public DownloadWebpageTask(int opt, List<MapStation> mapStationList, String lineName, String route) {
+    public DownloadWebpageTask(int opt, List<MapStation> mapStationList, List<Marker> lstMarkers, String lineName, String route, GoogleMap mMap) {
         this.option = opt;
         this.mapStationList = mapStationList;
         this.lineName = lineName;
         this.route = route;
+        this.lstMarkers = lstMarkers;
+        this.mMap = mMap;
     }
 
     public DownloadWebpageTask(int opt, TextView textView, Marker markerShowingInfoWindow) {
@@ -42,6 +51,25 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
     }
 
 
+    private Marker search(int stationID, List<Marker> lstMarkers){
+        String station = String.valueOf(stationID);
+        for (Iterator<Marker> iter = lstMarkers.listIterator(); iter.hasNext();){
+            Marker mItem = iter.next();
+            if (mItem.getSnippet().contains(station)){
+                return mItem;
+            }
+        }
+        return null;
+    }
+    private void deleteMarkers(String title, List<Marker> lstMarkers){
+        for (Iterator<Marker> iter = lstMarkers.listIterator(); iter.hasNext();){
+            Marker mItem = iter.next();
+            if (mItem.getTitle().contains(title)){
+                mItem.remove();
+                iter.remove();
+            }
+        }
+    }
 
     @Override
     protected String doInBackground(String... urls) {
@@ -84,21 +112,62 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
 
     }
 
+    private void addRealTimeTrans(LatLng latLng){
+
+        MarkerOptions newTransport = new MarkerOptions();
+        newTransport.position(latLng);
+        newTransport.icon(BitmapDescriptorFactory.fromResource(R.drawable.bus_small_purple));
+        mMap.addMarker(newTransport);
+
+    }
+
     private void lineTimes(String result)    {
         List<ArrivingTimes> converted;
         converted = GetAllTimesList(result);
-        int i = 0;        int k = 0;
+        int i = 0;
+        int lastTime = 100;
+        int currentTime = 100;
+        Marker lastFound;
 
         for(MapStation item : mapStationList){
             if (item.getLineName().equals(lineName) && item.getRoute().equals(route)){
                break;
             } else i++;
         }
+        deleteMarkers(lineName, lstMarkers);
 
         for(ArrivingTimes item: converted){
             int found = searchInMapList(i, item.getStationName(), 25);
             if (found != -1) {
-                mapStationList.get(found).setJonctionTime(item.getTime());
+                String time = item.getTime();
+                if (time.contains(">>")) {
+                    // add transport position
+                    Marker markerFound = search(mapStationList.get(found).getStationID(), lstMarkers);
+                    if (markerFound != null) {
+                        LatLng latLng = markerFound.getPosition();
+                        addRealTimeTrans(latLng);
+                        lastTime = 0;
+                    }
+
+                }   else    {
+                    if (time.contains("min")){
+                        currentTime = Integer.parseInt(time.substring(0,2).trim());
+                        if (lastTime > currentTime) {
+                            Marker markerFound = search(mapStationList.get(found).getStationID(), lstMarkers);
+                            lastFound = markerFound;
+                            if (markerFound != null) {
+                                LatLng latLng = markerFound.getPosition();
+                                addRealTimeTrans(latLng);
+                                lastTime = currentTime;
+                            }
+                        }
+                    }   else    {
+                        lastTime = 100;
+                    }
+                }
+                mapStationList.get(found).setJonctionTime(time);
+
+
             }
 
         }

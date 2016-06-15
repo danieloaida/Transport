@@ -34,7 +34,7 @@ public class MapHandler {
         this.mMap = mMap;
         this.dbHandler = dbHandler;
         this.context = context;
-        timeReceiver = new TimeReceiver(context, mapStationList);
+        timeReceiver = new TimeReceiver(context, mapStationList, lstMarkers, mMap);
     }
 
     private Marker search(String station){
