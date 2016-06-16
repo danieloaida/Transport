@@ -217,7 +217,7 @@ class MapStation {
 
         MapStation that = (MapStation) o;
 
-        if (that.getRoute() == null) {
+        if (this.getRoute() == null) {
             return lineName.equals(that.lineName);
         }
         else {
