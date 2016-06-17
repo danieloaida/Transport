@@ -40,7 +40,7 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String query = "CREATE TABLE " + TABLE_JUNCTIONS + " ( '" +
-                COLUMN_INDEX + "' INTEGER, '"  +
+                COLUMN_INDEX + "' INTEGER PRIMARY KEY, '"  +
                 COLUMN_lineID + "' INTEGER, '"  +
                 COLUMN_lineName + "' TEXT, '"  +
                 COLUMN_stationID + "' INTEGER, '"  +
@@ -48,8 +48,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 COLUMN_friendlyStationName + "' TEXT, '"  +
                 COLUMN_shortStationName + "' TEXT, '"  +
                 COLUMN_junctionName + "' TEXT, '"  +
-                COLUMN_lat + "' DOUBLE, '"  +
-                COLUMN_lng + "' DOUBLE, '"  +
+                COLUMN_lat + "' REAL, '"  +
+                COLUMN_lng + "' REAL, '"  +
                 COLUMN_invalid + "' TEXT, '"  +
                 COLUMN_verificationDate + "' TEXT, '"  +
                 COLUMN_route + "' TEXT "  +
@@ -58,7 +58,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_JUNCTIONS);
         onCreate(db);
     }
