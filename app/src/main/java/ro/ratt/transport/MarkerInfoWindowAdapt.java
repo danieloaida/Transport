@@ -3,7 +3,6 @@ package ro.ratt.transport;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -17,14 +16,14 @@ public class MarkerInfoWindowAdapt implements GoogleMap.InfoWindowAdapter {
     private final View myContentsView;
     private Context context;
     MapsActivity mapsActivity;
-    TimeReceiver timeReceiver;
+  //  TimeReceiver timeReceiver;
 
     MarkerInfoWindowAdapt(Context context){
         this.context = context;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         myContentsView = inflater.inflate(R.layout.info_window, null);
         mapsActivity = (MapsActivity) context;
-        this.timeReceiver = new TimeReceiver(context, mapsActivity.getMapStationList(), mapsActivity.getLstMarkers(), mapsActivity.getmMap());
+    //    this.timeReceiver = new TimeReceiver(context, mapsActivity.getMapStationList(), mapsActivity.getLstMarkers(), mapsActivity.getmMap());
     }
 
     private int searchInMapList(int start, int stationID, int lineID){
@@ -38,14 +37,14 @@ public class MarkerInfoWindowAdapt implements GoogleMap.InfoWindowAdapter {
             return i;
     }
 
-    private void onClickUpdate(int lineNo, int[] lstLines, String[] lstLNames, String[] lstRoutes){
+   /* private void onClickUpdate(int lineNo, int[] lstLines, String[] lstLNames, String[] lstRoutes){
 
         for(int i = 0; i < lineNo; i++){
 
             timeReceiver.StartDownload(lstLines[i], lstLNames[i], lstRoutes[i]);
         }
 
-    }
+    }*/
     @Override
     public View getInfoContents(final Marker marker) {
         final int[] lstLines = new int[10];
@@ -63,7 +62,7 @@ public class MarkerInfoWindowAdapt implements GoogleMap.InfoWindowAdapter {
             if (index != -1 ){
                 MapStation item = mapsActivity.getMapStationList().get(index);
                 if (!item.getJonctionTime().equals("xx : xx")){
-                    snippetText = item.getLineName() + ": " + item.getJonctionTime() + "\n";
+                    snippetText = snippetText + item.getLineName() + ": " + item.getJonctionTime() + "\n";
                     lstLines[i] = item.getLineID();
                     lstRoutes[i] = item.getRoute();
                     lstLNames[i] = item.getLineName();
@@ -78,7 +77,7 @@ public class MarkerInfoWindowAdapt implements GoogleMap.InfoWindowAdapter {
             marker.showInfoWindow();
         }
 
-        LinearLayout infoLayout = (LinearLayout) myContentsView.findViewById(R.id.infoLayout);
+       /* LinearLayout infoLayout = (LinearLayout) myContentsView.findViewById(R.id.infoLayout);
 
         infoLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +87,7 @@ public class MarkerInfoWindowAdapt implements GoogleMap.InfoWindowAdapter {
                     marker.showInfoWindow();
                 }
             }
-        });
+        });*/
         /*
 
         String stringUrl = "http://ratt.ro/txt/afis_msg.php?id_traseu="+Snippet[1]+"&id_statie="+Snippet[2];

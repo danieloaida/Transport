@@ -23,7 +23,14 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/settingsLayer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="bottom">
 
+    </LinearLayout>
     <ExpandableListView android:id="@+id/left_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"

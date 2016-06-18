@@ -75,7 +75,7 @@ public class MapHandler {
                 // Adding marker to the global list markers
                 lstMarkers.add(marker);
             } else {
-                String markerSnippet = found.getSnippet().concat(","+stationID);
+                String markerSnippet = found.getSnippet().concat(","+sItem.getId_line());
                 int lineNo = Integer.parseInt(markerSnippet.substring(0,1));
                 lineNo++;
                 found.setSnippet(lineNo + markerSnippet.substring(1));
@@ -87,7 +87,7 @@ public class MapHandler {
             mapStationList.add(item);
             int pos = mapStationList.indexOf(item);
             //draw line between stations
-            if (lastItem > 1) {
+            if (lastItem >= 1) {
                 findDirections(preStation.getLat(), preStation.getLng(), sItem.getLat(),sItem.getLng(),"walking", mapStationList, pos);
 
             }

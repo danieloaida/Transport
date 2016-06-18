@@ -8,7 +8,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.w3c.dom.Document;
@@ -57,7 +56,14 @@ public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Objec
                 if (exception == null)
                 {
                     ArrayList<LatLng> directionPoints = result;
-                    PolylineOptions rectLine = new PolylineOptions().width(10).color(Color.argb(255, 0, 175, 255));
+                    String lineName = mapStationList.get(pos).getLineName();
+                    int color;
+                    if (lineName.contains("E")) color = Color.argb(150,0,180,0); else
+                        if (lineName.contains("Tb")) color = Color.argb(150,145,25,255); else
+                            if (lineName.contains("Tv")) color = Color.argb(150,30,155,255); else
+                                color = Color.argb(150,255,0,0);
+
+                    PolylineOptions rectLine = new PolylineOptions().width(10).color(color);
 
                     for(int i = 0 ; i < directionPoints.size() ; i++)
                     {
@@ -94,6 +100,6 @@ public class GetDirectionsAsyncTask extends AsyncTask<Map<String, String>, Objec
 
         private void processException()
         {
-                Toast.makeText(context, "Error retriving data", 3000).show();
+                Toast.makeText(context, "Eroare: Nu exista internet!", Toast.LENGTH_SHORT).show();
         }
 }

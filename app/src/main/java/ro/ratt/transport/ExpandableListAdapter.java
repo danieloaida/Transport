@@ -63,6 +63,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         } else{
             txtListChild.setBackgroundColor(Color.WHITE);
         }
+        int color;
+        if (childText.contains("E")) color = Color.argb(200,0,180,0); else
+        if (childText.contains("Tb")) color = Color.argb(200,145,25,255); else
+        if (childText.contains("Tv")) color = Color.argb(200,30,155,255); else
+            color = Color.argb(200,255,0,0);
+        txtListChild.setTextColor(color);
         txtListChild.setText(childText);
         return convertView;
     }
@@ -111,7 +117,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 break;
 
         }
+        int color;
+        if (headerTitle.contains("Expres")) color = Color.argb(170,0,180,0); else
+        if (headerTitle.contains("Trolebuz")) color = Color.argb(170,145,25,255); else
+        if (headerTitle.contains("Tramvai")) color = Color.argb(170,30,155,255); else
+            color = Color.argb(170,255,0,0);
         lblListHeader.setTypeface(null, Typeface.BOLD);
+        lblListHeader.setTextColor(color);
         lblListHeader.setText(headerTitle);
 
         return convertView;

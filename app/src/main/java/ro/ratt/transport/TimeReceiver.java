@@ -3,6 +3,7 @@ package ro.ratt.transport;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
@@ -37,6 +38,7 @@ public class TimeReceiver {
         if (networkInfo != null && networkInfo.isConnected()) {
             new DownloadWebpageTask(2, mapStationList, lstMarkers, line, route, mMap).execute(stringUrl);
         } else {
+            Toast.makeText(context,"Eroare: Nu exista conectivitate la internet!", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -1,6 +1,7 @@
 package ro.ratt.transport;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
@@ -123,7 +124,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 String LineName = listDataChild.get(
                         listDataHeader.get(groupPosition)).get(
-                        childPosition);
+                     childPosition);
 
                 if (lstLineAvl.contains(new LineInfo(LineName, "route1"))){
                     mapHandler.removeLineStations(LineName);
@@ -164,13 +165,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void addBtn(String name){
 
         Button myButton = new Button(this);
+        int color;
+        if (name.contains("E")) color = Color.argb(150,0,180,0); else
+        if (name.contains("Tb")) color = Color.argb(150,145,25,255); else
+        if (name.contains("Tv")) color = Color.argb(150,30,155,255); else
+            color = Color.argb(150,255,0,0);
         myButton.setText(name);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(80, 80);
         layoutParams.setMargins(5, 3, 5, 10); // left, top, right, bottom
         myButton.setLayoutParams(layoutParams);
+        myButton.setTextColor(color);
         myButton.setBackgroundColor(Color.WHITE);
         myButton.setAlpha(0.8f);
         myButton.setOnClickListener(btnClickListener);
+        myButton.setTypeface(null, Typeface.BOLD);
 
         LinearLayout mainLayout = (LinearLayout)findViewById(R.id.mapLayout);
         mainLayout.addView(myButton);

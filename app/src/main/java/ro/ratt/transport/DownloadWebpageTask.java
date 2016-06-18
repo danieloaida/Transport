@@ -74,7 +74,6 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... urls) {
 
-        // params comes from the execute() call: params[0] is the url.
         try {
             return downloadUrl(urls[0]);
         } catch (IOException e) {
@@ -188,30 +187,18 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
 // a string.
     private String downloadUrl(String myurl) throws IOException {
         InputStream is = null;
-        // Only display the first 500 characters of the retrieved
-        // web page content.
         int len = 10000;
 
         try {
             URL url = new URL(myurl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-           // conn.setReadTimeout(30000 /* milliseconds */);
-            //conn.setConnectTimeout(60000 /* milliseconds */);
-           // conn.setRequestMethod("GET");
-           // conn.setDoInput(true);
-            // Starts the query
-            //conn.connect();
-            //int response = conn.getResponseCode();
 
             is = new BufferedInputStream(conn.getInputStream());
 
-            // Convert the InputStream into a string
             String contentAsString = readStream(is);
 
             return contentAsString;
 
-            // Makes sure that the InputStream is closed after the app is
-            // finished using it.
         } finally {
             if (is != null) {
                 is.close();
