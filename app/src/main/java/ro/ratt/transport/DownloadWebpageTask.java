@@ -116,6 +116,7 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         MarkerOptions newTransport = new MarkerOptions();
         newTransport.title(lineName);
         newTransport.position(latLng);
+        newTransport.snippet("transport");
         newTransport.icon(BitmapDescriptorFactory.fromResource(R.drawable.bus_small_purple));
         Marker itemAdded = mMap.addMarker(newTransport);
         lstMarkers.add(itemAdded);
@@ -128,7 +129,7 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         int i = 0;
         int lastTime = 100;
         int currentTime = 100;
-        Marker lastFound;
+        Marker lastFound = null;
 
         for(MapStation item : mapStationList){
             if (item.getLineName().equals(lineName) && item.getRoute().equals(route)){
@@ -142,7 +143,8 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
             if (found != -1) {
                 i = found;
                 String time = item.getTime();
-                if (time.contains(">>")) {
+                MapStation mapStationFound = mapStationList.get(found);
+                if (time.contains("&gt;&gt;")) {
                     // add transport position
                     Marker markerFound = search(mapStationList.get(found).getStationID(), lstMarkers);
                     if (markerFound != null) {
@@ -150,15 +152,18 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
                         addRealTimeTrans(latLng);
                         lastTime = 0;
                     }
-
+                    time = ">>";
                 }   else    {
                     if (time.contains("min")){
                         currentTime = Integer.parseInt(time.substring(0,2).trim());
                         if (lastTime > currentTime) {
-                            Marker markerFound = search(mapStationList.get(found).getStationID(), lstMarkers);
-                            lastFound = markerFound;
-                            if (markerFound != null) {
-                                LatLng latLng = markerFound.getPosition();
+                            Marker markerFound = search(mapStationFound.getStationID(), lstMarkers);
+
+                            if (markerFound != null && lastFound != null) {
+                                int x = mapStationFound.line.getPoints().size()/(1+currentTime);
+                                LatLng latLng = mapStationFound.line.getPoints().get(x);
+
+
                                 addRealTimeTrans(latLng);
                                 lastTime = currentTime;
                             }
@@ -167,8 +172,9 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
                         lastTime = 100;
                     }
                 }
-                mapStationList.get(found).setJonctionTime(time);
 
+                mapStationFound.setJonctionTime(time);
+                lastFound = search(mapStationList.get(found).getStationID(), lstMarkers);
 
             }
 
@@ -181,7 +187,7 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         while((i < end) && !mapStationList.get(i).getStationName().equals(stationName) && mapStationList.get(i).getLineName().equals(lineName)){
             i++;
         }
-        if (i == end) return -1;
+        if (i == end || i == start) return -1;
         else
         return i;
     }

@@ -115,28 +115,44 @@ public class MapHandler {
                 }
                 iter.remove();
             }
-
         }
         for (Iterator<Marker> iter = lstMarkers.listIterator(); iter.hasNext();){
             Marker mItem = iter.next();
-            String[] Snippet = mItem.getSnippet().split(",");
-            int lineNo = Integer.parseInt(Snippet[0]);
-            if (lineNo == 1){
-                mItem.remove();
-                iter.remove();
+            int lineNo = 0;
+            String lineID = dbHandler.getLineID(line);
+            String[] Snippet = null;
+            String rawSnippet = mItem.getSnippet();
+            if (rawSnippet.contains("transport") ){
+                lineNo = 1;
             } else {
-                String reMerge = "";
-                for(String lineItem: Snippet)
-                if (lineItem.equals(line)) {
-                    lineNo--;
-                }else {
-                    reMerge.concat(lineItem + ",");
+                Snippet = rawSnippet.split(",");
+                lineNo = Integer.parseInt(Snippet[0]);
+            }
+            if (rawSnippet.contains(lineID) || mItem.getTitle().contains(line)){
+
+                if (lineNo == 1){
+                    mItem.remove();
+                    iter.remove();
+                } else {
+                    String reMerge = "";
+                    int addComma =0;
+                    for(String lineItem: Snippet) {
+                        if (lineItem.equals(lineID)) {
+                            lineNo--;
+                            addComma= 0;
+                        } else {
+                            if (addComma == 1) reMerge += ",";
+                            reMerge += lineItem;
+                            addComma = 1;
+                        }
+
+                    }
+                    reMerge = lineNo + reMerge.substring(1);
+
+                    mItem.setSnippet(reMerge);
                 }
-                reMerge = lineNo + reMerge.substring(1);
-                mItem.setSnippet(reMerge);
             }
         }
-
 
     }
 
@@ -218,7 +234,7 @@ class MapStation {
 
         MapStation that = (MapStation) o;
 
-        if (this.getRoute() == null) {
+        if (that.getRoute() == null || this.getRoute() == null) {
             return lineName.equals(that.lineName);
         }
         else {

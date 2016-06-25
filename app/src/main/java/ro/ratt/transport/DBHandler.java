@@ -159,6 +159,29 @@ public class DBHandler extends SQLiteOpenHelper {
 
         return lstReturn;
     }
+    public String getLineID(String line){
+        String dbString = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT " + COLUMN_lineID + " FROM " + TABLE_JUNCTIONS + " WHERE " + COLUMN_lineName + " = '" + line  + "' GROUP BY "+ COLUMN_lineID;
+
+        //Cursor point to a location in results
+        Cursor c = db.rawQuery(query, null);
+        //Move to the first raw in result
+        c.moveToFirst();
+
+        while (!c.isAfterLast()){
+            if (c.getString(c.getColumnIndex(COLUMN_lineID)) != null){
+                dbString += c.getString(c.getColumnIndex(COLUMN_lineID));
+                c.moveToNext();
+            }
+        }
+        db.close();
+        return dbString;
+
+
+
+
+    }
     // Print data
     public String dbToString( String columnName){
         String dbString = "";

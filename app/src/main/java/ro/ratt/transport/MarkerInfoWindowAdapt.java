@@ -54,25 +54,29 @@ public class MarkerInfoWindowAdapt implements GoogleMap.InfoWindowAdapter {
         tvTitle.setText(marker.getTitle());
         TextView tvSnippet = ((TextView)myContentsView.findViewById(R.id.snippet));
         String snippetText = "";
-        String[] Snippet = marker.getSnippet().split(",");
-        final int lineNo = Integer.parseInt(Snippet[0]);
+        if (marker.getSnippet().contains("transport")){
+            tvSnippet.setText(snippetText);
+        }
+        else {
+            String[] Snippet = marker.getSnippet().split(",");
+            final int lineNo = Integer.parseInt(Snippet[0]);
 
-        for (int i = 0; i<lineNo; i++){
-            int index = searchInMapList(0, Integer.parseInt(Snippet[1]), Integer.parseInt(Snippet[i + 2]));
-            if (index != -1 ){
-                MapStation item = mapsActivity.getMapStationList().get(index);
-                if (!item.getJonctionTime().equals("xx : xx")){
-                    snippetText = snippetText + item.getLineName() + ": " + item.getJonctionTime() + "\n";
-                    lstLines[i] = item.getLineID();
-                    lstRoutes[i] = item.getRoute();
-                    lstLNames[i] = item.getLineName();
+            for (int i = 0; i < lineNo; i++) {
+                int index = searchInMapList(0, Integer.parseInt(Snippet[1]), Integer.parseInt(Snippet[i + 2]));
+                if (index != -1) {
+                    MapStation item = mapsActivity.getMapStationList().get(index);
+                    if (!item.getJonctionTime().equals("xx : xx")) {
+                        snippetText = snippetText + item.getLineName() + ": " + item.getJonctionTime() + "\n";
+                        lstLines[i] = item.getLineID();
+                        lstRoutes[i] = item.getRoute();
+                        lstLNames[i] = item.getLineName();
+
+                    }
 
                 }
-
             }
+            tvSnippet.setText(snippetText);
         }
-        tvSnippet.setText(snippetText);
-
         if (marker != null && marker.isInfoWindowShown()) {
             marker.showInfoWindow();
         }
