@@ -29,12 +29,13 @@ public class MapHandler {
     private TimeReceiver timeReceiver;
 
 
-    public MapHandler(List<MapStation> mapStationList, GoogleMap mMap, DBHandler dbHandler, Context context) {
+    public MapHandler(List<MapStation> mapStationList, List<Marker> lstMarkers, GoogleMap mMap, DBHandler dbHandler, Context context) {
         this.mapStationList = mapStationList;
         this.mMap = mMap;
         this.dbHandler = dbHandler;
         this.context = context;
         timeReceiver = new TimeReceiver(context, mapStationList, lstMarkers, mMap);
+        this.lstMarkers = lstMarkers;
     }
 
     private Marker search(String station){

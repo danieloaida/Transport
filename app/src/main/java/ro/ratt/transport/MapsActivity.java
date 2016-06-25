@@ -88,9 +88,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onGroupExpand(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        listDataHeader.get(groupPosition) + " Expanded",
-                        Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -99,9 +96,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onGroupCollapse(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        listDataHeader.get(groupPosition) + " Collapsed",
-                        Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -244,7 +238,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mapHandler = new MapHandler(mapStationList,mMap,dbHandler,this.getApplicationContext());
+        mapHandler = new MapHandler(mapStationList,lstMarkers,mMap,dbHandler,this.getApplicationContext());
 
         mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapt(this));
         CameraUpdate zoom=CameraUpdateFactory.zoomTo(13);

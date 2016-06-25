@@ -114,9 +114,11 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
     private void addRealTimeTrans(LatLng latLng){
 
         MarkerOptions newTransport = new MarkerOptions();
+        newTransport.title(lineName);
         newTransport.position(latLng);
         newTransport.icon(BitmapDescriptorFactory.fromResource(R.drawable.bus_small_purple));
-        mMap.addMarker(newTransport);
+        Marker itemAdded = mMap.addMarker(newTransport);
+        lstMarkers.add(itemAdded);
 
     }
 
@@ -138,6 +140,7 @@ public class DownloadWebpageTask extends AsyncTask<String, Void, String> {
         for(ArrivingTimes item: converted){
             int found = searchInMapList(i, item.getStationName(), 25);
             if (found != -1) {
+                i = found;
                 String time = item.getTime();
                 if (time.contains(">>")) {
                     // add transport position
