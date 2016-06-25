@@ -182,15 +182,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         @Override
         public void onClick(View v) {
+            timeReceiver = getTimeReceiver();
             Button b = (Button)v;
             String buttonText = b.getText().toString();
             int tmp = mapStationList.indexOf(new MapStation(buttonText));
             int line_id = mapStationList.get(tmp).getLineID();
             int found = lstLineAvl.indexOf(new LineInfo(buttonText, "route1"));
             if (found != -1){
-                timeReceiver.StartDownload(line_id, buttonText, "route1");
+                timeReceiver.StartDownload(line_id, buttonText, "route1",mMap);
             }else{
-                timeReceiver.StartDownload(line_id, buttonText, "route2");}
+                timeReceiver.StartDownload(line_id, buttonText, "route2",mMap);}
         }
 
     };
@@ -238,7 +239,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mapHandler = new MapHandler(mapStationList,lstMarkers,mMap,dbHandler,this.getApplicationContext());
+        mapHandler = new MapHandler(mapStationList,lstMarkers,mMap,dbHandler,this.getApplicationContext(), timeReceiver);
 
         mMap.setInfoWindowAdapter(new MarkerInfoWindowAdapt(this));
         CameraUpdate zoom=CameraUpdateFactory.zoomTo(13);
@@ -303,5 +304,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public GoogleMap getmMap() {
         return mMap;
+    }
+
+    public TimeReceiver getTimeReceiver() {
+        return timeReceiver;
     }
 }

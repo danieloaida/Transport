@@ -30,7 +30,7 @@ public class TimeReceiver {
         this.mMap = mMap;
     }
 
-    public void StartDownload(int line_id, String line, String route){
+    public void StartDownload(int line_id, String line, String route, GoogleMap mMap){
         stringUrl =  "http://86.122.170.105:61978/html/timpi/sens0.php?param1="+line_id;
         connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         networkInfo = connMgr.getActiveNetworkInfo();

@@ -29,12 +29,12 @@ public class MapHandler {
     private TimeReceiver timeReceiver;
 
 
-    public MapHandler(List<MapStation> mapStationList, List<Marker> lstMarkers, GoogleMap mMap, DBHandler dbHandler, Context context) {
+    public MapHandler(List<MapStation> mapStationList, List<Marker> lstMarkers, GoogleMap mMap, DBHandler dbHandler, Context context, TimeReceiver timeReceiver) {
         this.mapStationList = mapStationList;
         this.mMap = mMap;
         this.dbHandler = dbHandler;
         this.context = context;
-        timeReceiver = new TimeReceiver(context, mapStationList, lstMarkers, mMap);
+        this.timeReceiver = timeReceiver;
         this.lstMarkers = lstMarkers;
     }
 
@@ -98,7 +98,7 @@ public class MapHandler {
         }
 
         // try receiving times for stations
-        timeReceiver.StartDownload(line_id, line, route);
+        timeReceiver.StartDownload(line_id, line, route, mMap);
 
 
 
